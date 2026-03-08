@@ -1,0 +1,271 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes commandes - The Klassiker{% endblock %}
+
+{% block body %}
+  <!-- ================= HERO ================= -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="hero-badge">Mon compte</p>
+      <h1>Mes commandes</h1>
+      <p class="hero-lead">
+        Historique de toutes vos commandes.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= ORDERS ================= -->
+  <section class="section section-beige">
+    <div class="orders-page">
+      <a href="{{ path('app_user_dashboard') }}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+      </a>
+
+      {% if orders|length > 0 %}
+        <div class="orders-full-list">
+          {% for order in orders %}
+            <div class="order-card-full">
+              <div class="order-header">
+                <div class="order-id-date">
+                  <span class="order-id">Commande #{{ order.id }}</span>
+                  <span class="order-date">{{ order.createdAt|date('d/m/Y à H:i') }}</span>
+                </div>
+                <div class="order-status status-{{ order.status }}">
+                  {% if order.status == 'pending' %}
+                    En attente
+                  {% elseif order.status == 'confirmed' %}
+                    Confirmée
+                  {% elseif order.status == 'preparing' %}
+                    En préparation
+                  {% elseif order.status == 'ready' %}
+                    Prête
+                  {% elseif order.status == 'completed' %}
+                    Livrée
+                  {% elseif order.status == 'cancelled' %}
+                    Annulée
+                  {% else %}
+                    {{ order.status }}
+                  {% endif %}
+                </div>
+              </div>
+              
+              <div class="order-details">
+                <div class="order-type">
+                  <i class="fas fa-{{ order.type == 'delivery' ? 'motorcycle' : 'store' }}"></i>
+                  {{ order.type == 'delivery' ? 'Livraison' : 'À emporter' }}
+                </div>
+                
+                {% if order.type == 'delivery' and order.deliveryAddress %}
+                  <div class="order-address">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ order.deliveryAddress }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="order-items">
+                {% for item in order.items %}
+                  <div class="order-item">
+                    <span class="item-qty">{{ item.quantity }}x</span>
+                    <span class="item-name">{{ item.dishName }}</span>
+                    <span class="item-price">{{ (item.quantity * item.unitPrice)|number_format(2, ',', ' ') }} €</span>
+                  </div>
+                {% endfor %}
+              </div>
+              
+              <div class="order-footer">
+                <div class="order-total">{{ order.totalAmount|number_format(2, ',', ' ') }} €</div>
+                <a href="{{ path('app_user_order_show', {id: order.id}) }}" class="btn btn-outline-sm">Détails</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-receipt"></i>
+          <h3>Aucune commande</h3>
+          <p>Vous n'avez pas encore passé de commande.</p>
+          <a href="{{ path('app_order') }}" class="btn btn-primary">Commander maintenant</a>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .orders-page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #666;
+      text-decoration: none;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      color: #0b1b32;
+    }
+
+    .orders-full-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .order-card-full {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .order-header {
+      background: #f8f9fa;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .order-id-date {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .order-id {
+      font-weight: 700;
+      color: #0b1b32;
+      font-size: 1.1rem;
+    }
+
+    .order-date {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .order-status {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-confirmed { background: #cce5ff; color: #004085; }
+    .status-preparing { background: #ffeeba; color: #856404; }
+    .status-ready { background: #d4edda; color: #155724; }
+    .status-completed { background: #d4edda; color: #155724; }
+    .status-cancelled { background: #f8d7da; color: #721c24; }
+
+    .order-details {
+      padding: 16px 20px;
+      display: flex;
+      gap: 20px;
+      font-size: 0.9rem;
+      color: #666;
+      border-bottom: 1px solid #eee;
+    }
+
+    .order-type, .order-address {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .order-items {
+      padding: 16px 20px;
+    }
+
+    .order-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-qty {
+      font-weight: 600;
+      color: #9a1515;
+      min-width: 30px;
+    }
+
+    .item-name {
+      flex: 1;
+      color: #0b1b32;
+    }
+
+    .item-price {
+      font-weight: 600;
+      color: #0b1b32;
+    }
+
+    .order-footer {
+      padding: 16px 20px;
+      background: #f8f9fa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .order-total {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #9a1515;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: #ccc;
+      margin-bottom: 16px;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 8px;
+      color: #0b1b32;
+    }
+
+    .empty-state p {
+      margin: 0 0 20px;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .order-details {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+{% endblock %}
+

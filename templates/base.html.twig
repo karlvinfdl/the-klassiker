@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}The Klassiker — Burgers & Kebabs à Évry{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The Klassiker - Smash burgers & kebabs à Évry-Courcouronnes. Viande smashée à la minute, sauces maison, portions généreuses." />
+
+  <!-- Fonts + Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  {% block stylesheets %}
+    {{ encore_entry_link_tags('app') }}
+  {% endblock %}
+  
+  <link rel="shortcut icon" href="{{ asset('build/images/logo.webp') }}" />
+</head>
+
+<body>
+  <!-- ================= HEADER ================= -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="{{ path('app_home') }}" class="brand">
+        <img src="{{ asset('build/images/logo.webp') }}" alt="Logo The Klassiker">
+        <span class="brand-text">
+          <span class="brand-name">The Klassiker</span>
+          <span class="brand-tagline">Smash burgers & kebabs</span>
+      </a>
+
+      <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="{{ path('app_home') }}#accueil" class="nav-link{% if app.request.uri == path('app_home') %} active{% endif %}">Accueil</a>
+        <a href="{{ path('app_home') }}#carte" class="nav-link">Notre carte</a>
+        <a href="{{ path('app_home') }}#galerie" class="nav-link">Galerie</a>
+        <a href="{{ path('app_contact') }}" class="nav-link{% if app.request.uri == path('app_contact') %} active{% endif %}">Contact</a>
+        <a href="{{ path('app_order') }}" class="nav-link{% if app.request.attributes.get('_route') starts with 'app_order' %} active{% endif %}">Commander</a>
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+          <a href="{{ path('app_user_dashboard') }}" class="nav-icon" aria-label="Mon compte" title="Mon compte">
+            <i class="fas fa-user-circle"></i>
+          </a>
+          <a href="{{ path('app_logout') }}" class="nav-icon" aria-label="Déconnexion">
+            <i class="fas fa-sign-out-alt"></i>
+          </a>
+        {% else %}
+          <a href="{{ path('app_login') }}" class="nav-icon" aria-label="Connexion">
+            <i class="fas fa-user"></i>
+          </a>
+        {% endif %}
+
+        <div class="nav-social-mobile">
+          <div class="social-links">
+            <a href="https://www.facebook.com/p/The-Klassiker-100070645848253/?locale=fr_FR" target="_blank" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://www.instagram.com/theklassiker/#" target="_blank" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.tiktok.com/@the.klassiker" target="_blank" aria-label="TikTok">
+              <i class="fab fa-tiktok"></i>
+            </a>
+          </div>
+          <p class="nav-copy">© {{ 'now'|date('Y') }} The Klassiker</p>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {% for label, messages in app.flashes %}
+      {% for message in messages %}
+        <div class="alert alert-{{ label }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endfor %}
+    
+    {% block body %}{% endblock %}
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© {{ 'now'|date('Y') }} The Klassiker — Tous droits réservés</p>
+      <div class="social-links">
+        <a href="https://www.facebook.com/p/The-Klassiker-100070645848253/?locale=fr_FR" target="_blank" aria-label="Facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://www.instagram.com/theklassiker/" target="_blank" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.tiktok.com/@the.klassiker" target="_blank" aria-label="TikTok">
+          <i class="fab fa-tiktok"></i>
+        </a>
+      </div>
+  </footer>
+
+  {% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+  {% endblock %}
+</body>
+</html>
+

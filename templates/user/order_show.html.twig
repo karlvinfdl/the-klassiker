@@ -1,0 +1,294 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande #{{ order.id }} - The Klassiker{% endblock %}
+
+{% block body %}
+  <!-- ================= HERO ================= -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="hero-badge">Commande</p>
+      <h1>Commande #{{ order.id }}</h1>
+      <p class="hero-lead">
+        Passée le {{ order.createdAt|date('d/m/Y à H:i') }}
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= ORDER DETAIL ================= -->
+  <section class="section section-beige">
+    <div class="order-detail-page">
+      <a href="{{ path('app_user_orders') }}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Retour à mes commandes
+      </a>
+
+      <div class="order-detail-card">
+        <!-- Status Banner -->
+        <div class="order-status-banner status-{{ order.status }}">
+          <i class="fas fa-{{ order.status == 'cancelled' ? 'times-circle' : (order.status == 'completed' ? 'check-circle' : 'clock') }}"></i>
+          {% if order.status == 'pending' %}
+            En attente de confirmation
+          {% elseif order.status == 'confirmed' %}
+            Commande confirmée
+          {% elseif order.status == 'preparing' %}
+            En préparation
+          {% elseif order.status == 'ready' %}
+            Prête!
+          {% elseif order.status == 'completed' %}
+            Livrée
+          {% elseif order.status == 'cancelled' %}
+            Annulée
+          {% else %}
+            {{ order.status }}
+          {% endif %}
+        </div>
+
+        <!-- Order Info -->
+        <div class="order-info-grid">
+          <div class="info-block">
+            <span class="info-label">Type</span>
+            <span class="info-value">
+              <i class="fas fa-{{ order.type == 'delivery' ? 'motorcycle' : 'store' }}"></i>
+              {{ order.type == 'delivery' ? 'Livraison' : 'À emporter' }}
+            </span>
+          </div>
+          
+          <div class="info-block">
+            <span class="info-label">Date</span>
+            <span class="info-value">{{ order.createdAt|date('d/m/Y à H:i') }}</span>
+          </div>
+          
+          <div class="info-block">
+            <span class="info-label">Client</span>
+            <span class="info-value">{{ order.customerName }}</span>
+          </div>
+          
+          <div class="info-block">
+            <span class="info-label">Téléphone</span>
+            <span class="info-value">{{ order.customerPhone }}</span>
+          </div>
+        </div>
+
+        {% if order.type == 'delivery' and order.deliveryAddress %}
+          <div class="delivery-address">
+            <span class="info-label">Adresse de livraison</span>
+            <p>{{ order.deliveryAddress }}</p>
+          </div>
+        {% endif %}
+
+        {% if order.comments %}
+          <div class="order-comments">
+            <span class="info-label">Commentaires</span>
+            <p>{{ order.comments }}</p>
+          </div>
+        {% endif %}
+
+        <!-- Items -->
+        <div class="order-items-section">
+          <h3>Articles commandés</h3>
+          <div class="items-list">
+            {% for item in order.items %}
+              <div class="item-row">
+                <div class="item-info">
+                  <span class="item-qty">{{ item.quantity }}x</span>
+                  <span class="item-name">{{ item.dishName }}</span>
+                </div>
+                <div class="item-price">{{ (item.quantity * item.unitPrice)|number_format(2, ',', ' ') }} €</div>
+              </div>
+              {% if item.specialInstructions %}
+                <div class="item-instructions">
+                  <i class="fas fa-info-circle"></i> {{ item.specialInstructions }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div class="order-total-section">
+          <span>Total</span>
+          <span class="total-amount">{{ order.totalAmount|number_format(2, ',', ' ') }} €</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="order-actions">
+        <a href="{{ path('app_order') }}" class="btn btn-primary">Commander à nouveau</a>
+        <a href="{{ path('app_user_dashboard') }}" class="btn btn-outline">Mon compte</a>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .order-detail-page {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #666;
+      text-decoration: none;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      color: #0b1b32;
+    }
+
+    .order-detail-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .order-status-banner {
+      padding: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .order-status-banner i {
+      margin-right: 8px;
+    }
+
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-confirmed { background: #cce5ff; color: #004085; }
+    .status-preparing { background: #ffeeba; color: #856404; }
+    .status-ready { background: #d4edda; color: #155724; }
+    .status-completed { background: #d4edda; color: #155724; }
+    .status-cancelled { background: #f8d7da; color: #721c24; }
+
+    .order-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #888;
+    }
+
+    .info-value {
+      font-weight: 600;
+      color: #0b1b32;
+    }
+
+    .delivery-address, .order-comments {
+      padding: 16px 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .delivery-address p, .order-comments p {
+      margin: 4px 0 0;
+      color: #0b1b32;
+    }
+
+    .order-items-section {
+      padding: 20px;
+    }
+
+    .order-items-section h3 {
+      margin: 0 0 16px;
+      font-size: 1rem;
+      color: #0b1b32;
+    }
+
+    .items-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .item-row:last-child {
+      border-bottom: none;
+    }
+
+    .item-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .item-qty {
+      font-weight: 700;
+      color: #9a1515;
+      min-width: 35px;
+    }
+
+    .item-name {
+      color: #0b1b32;
+    }
+
+    .item-price {
+      font-weight: 600;
+      color: #0b1b32;
+    }
+
+    .item-instructions {
+      font-size: 0.8rem;
+      color: #888;
+      padding: 4px 0 12px 47px;
+      font-style: italic;
+    }
+
+    .order-total-section {
+      background: #f8f9fa;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .total-amount {
+      color: #9a1515;
+      font-size: 1.4rem;
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 500px) {
+      .order-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .order-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+{% endblock %}
+

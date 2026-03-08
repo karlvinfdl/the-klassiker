@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recrutement - The Klassiker{% endblock %}
+
+{% block body %}
+  <!-- ================= HERO ================= -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="section-kicker">Rejoignez l'équipe</p>
+      <h1>Recrutement</h1>
+    </div>
+  </section>
+
+  <!-- ================= RECRUTEMENT ================= -->
+  <section class="recrutement-page-section">
+    <div class="recrutement-page-inner">
+      <div class="recrutement-page-text">
+        <h2>Venez bosser chez The Klassiker !</h2>
+        
+        <p>
+          Tu cherches un taff dans une ambiance cool et dynamique ? 
+          The Klassiker recrute ! Que tu aies de l'expérience ou non, 
+          on est ouverts à toutes les candidatures motivées.
+        </p>
+
+        <p>
+          On recherche principalement des :
+        </p>
+        
+        <ul class="recrutement-page-list">
+          <li><i class="fas fa-check"></i> Caissiers(ères)</li>
+          <li><i class="fas fa-check"></i> Serveurs(euses)</li>
+          <li><i class="fas fa-check"></i> Cuisiniers(ères)</li>
+          <li><i class="fas fa-check"></i> Préparateurs(trices) de commandes</li>
+          <li><i class="fas fa-check"></i> Livreurs(euses)</li>
+        </ul>
+
+        <p>
+          <strong>Ce qu'on propose :</strong>
+        </p>
+        <ul class="recrutement-page-list">
+          <li><i class="fas fa-star"></i> CDI ou CDD selon profil</li>
+          <li><i class="fas fa-star"></i> Horaires flexibles</li>
+          <li><i class="fas fa-star"></i> Environnement moderne et dynamique</li>
+          <li><i class="fas fa-star"></i> Formation possible</li>
+          <li><i class="fas fa-star"></i> Événements d'équipe réguliers</li>
+        </ul>
+      </div>
+
+      <div class="recrutement-form-wrapper">
+        <p class="recrutement-form-text">
+          Intéressé(e) ? Envoye-nous ta candidature !
+        </p>
+
+        <form action="mailto:the.klassiker@gmail.com?subject=Candidature%20The%20Klassiker" method="post" enctype="text/plain">
+          <div class="form-group mb-3">
+            <label class="form-label" style="color: #FFEED0;">Ton nom</label>
+            <input type="text" class="form-control" placeholder="Ton nom" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label" style="color: #FFEED0;">Ton prénom</label>
+            <input type="text" class="form-control" placeholder="Ton prénom" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label" style="color: #FFEED0;">Ton email</label>
+            <input type="email" class="form-control" placeholder="ton@email.com" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label" style="color: #FFEED0;">Ton téléphone</label>
+            <input type="tel" class="form-control" placeholder="06 12 34 56 78">
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label" style="color: #FFEED0;">Poste souhaité</label>
+            <select class="form-control">
+              <option value="">Choisir un poste...</option>
+              <option value="caissier">Caissier(ère)</option>
+              <option value="serveur">Serveur(euse)</option>
+              <option value="cuisinier">Cuisinier(ère)</option>
+              <option value="preparateur">Préparateur(trice) de commandes</option>
+              <option value="livreur">Livreur(euse)</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label" style="color: #FFEED0;">Présentation</label>
+            <textarea class="form-control" rows="4" placeholder="Parle-nous de toi..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">
+            Envoyer ma candidature
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

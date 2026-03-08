@@ -1,0 +1,385 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte - The Klassiker{% endblock %}
+
+{% block body %}
+  <!-- ================= HERO COMMANDE ================= -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="hero-badge">Mon compte</p>
+      <h1>Bienvenue,<br><span>{{ user.firstName }}!</span></h1>
+      <p class="hero-lead">
+        Gérez vos commandes et votre profil depuis cette page.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= DASHBOARD ================= -->
+  <section class="section section-beige">
+    <div class="user-dashboard">
+      <!-- Quick Stats -->
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-shopping-basket"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ orders|length }}</span>
+            <span class="stat-label">Commandes</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-euro-sign"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ totalSpent|number_format(2, ',', ' ') }} €</span>
+            <span class="stat-label">Total dépensé</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-calendar"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ user.createdAt|date('d/m/Y') }}</span>
+            <span class="stat-label">Membre depuis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="dashboard-actions">
+        <a href="{{ path('app_user_orders') }}" class="action-card">
+          <div class="action-icon">
+            <i class="fas fa-receipt"></i>
+          </div>
+          <div class="action-text">
+            <h3>Mes commandes</h3>
+            <p>Voir l'historique de vos commandes</p>
+          </div>
+          <i class="fas fa-arrow-right action-arrow"></i>
+        </a>
+        
+        <a href="{{ path('app_user_profile') }}" class="action-card">
+          <div class="action-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="action-text">
+            <h3>Mon profil</h3>
+            <p>Modifier vos informations personnelles</p>
+          </div>
+          <i class="fas fa-arrow-right action-arrow"></i>
+        </a>
+        
+        <a href="{{ path('app_order') }}" class="action-card action-card-primary">
+          <div class="action-icon">
+            <i class="fas fa-plus"></i>
+          </div>
+          <div class="action-text">
+            <h3>Commander</h3>
+            <p>Passer une nouvelle commande</p>
+          </div>
+          <i class="fas fa-arrow-right action-arrow"></i>
+        </a>
+      </div>
+
+      <!-- Recent Orders -->
+      {% if orders|length > 0 %}
+        <div class="dashboard-section">
+          <div class="section-header-inline">
+            <h2>Dernières commandes</h2>
+            <a href="{{ path('app_user_orders') }}" class="btn-link">Voir tout</a>
+          </div>
+          
+          <div class="orders-list">
+            {% for order in orders|slice(0, 3) %}
+              <div class="order-card-mini">
+                <div class="order-info">
+                  <span class="order-id">#{{ order.id }}</span>
+                  <span class="order-date">{{ order.createdAt|date('d/m/Y à H:i') }}</span>
+                </div>
+                <div class="order-status-mini status-{{ order.status }}">
+                  {% if order.status == 'pending' %}
+                    En attente
+                  {% elseif order.status == 'confirmed' %}
+                    Confirmée
+                  {% elseif order.status == 'preparing' %}
+                    En préparation
+                  {% elseif order.status == 'ready' %}
+                    Prête
+                  {% elseif order.status == 'completed' %}
+                    Livrée
+                  {% elseif order.status == 'cancelled' %}
+                    Annulée
+                  {% else %}
+                    {{ order.status }}
+                  {% endif %}
+                </div>
+                <div class="order-total">{{ order.totalAmount|number_format(2, ',', ' ') }} €</div>
+                <a href="{{ path('app_user_order_show', {id: order.id}) }}" class="btn btn-outline-sm">Voir</a>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-shopping-basket"></i>
+          <h3>Pas encore de commandes</h3>
+          <p>Découvrez notre menu et passez votre première commande!</p>
+          <a href="{{ path('app_order') }}" class="btn btn-primary">Commander maintenant</a>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .user-dashboard {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Stats */
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: rgba(154, 21, 21, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9a1515;
+      font-size: 1.2rem;
+    }
+
+    .stat-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-number {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0b1b32;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    /* Actions */
+    .dashboard-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .action-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease;
+    }
+
+    .action-card:hover {
+      transform: translateX(4px);
+    }
+
+    .action-card-primary {
+      background: #0b1b32;
+      color: #fff8e8;
+    }
+
+    .action-card-primary .action-icon {
+      background: rgba(255, 188, 0, 0.2);
+      color: #ffbc00;
+    }
+
+    .action-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(11, 27, 50, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0b1b32;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .action-text {
+      flex: 1;
+    }
+
+    .action-text h3 {
+      margin: 0 0 2px;
+      font-size: 1rem;
+      color: inherit;
+    }
+
+    .action-text p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .action-card-primary .action-text p {
+      color: rgba(255, 248, 232, 0.7);
+    }
+
+    .action-arrow {
+      color: #ccc;
+    }
+
+    .action-card-primary .action-arrow {
+      color: rgba(255, 248, 232, 0.5);
+    }
+
+    /* Section Header */
+    .section-header-inline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .section-header-inline h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #0b1b32;
+    }
+
+    /* Orders List */
+    .orders-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .order-card-mini {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .order-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .order-id {
+      font-weight: 600;
+      color: #0b1b32;
+    }
+
+    .order-date {
+      font-size: 0.75rem;
+      color: #888;
+    }
+
+    .order-status-mini {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-confirmed { background: #cce5ff; color: #004085; }
+    .status-preparing { background: #ffeeba; color: #856404; }
+    .status-ready { background: #d4edda; color: #155724; }
+    .status-completed { background: #d4edda; color: #155724; }
+    .status-cancelled { background: #f8d7da; color: #721c24; }
+
+    .order-total {
+      font-weight: 700;
+      color: #9a1515;
+      min-width: 70px;
+      text-align: right;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: #ccc;
+      margin-bottom: 16px;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 8px;
+      color: #0b1b32;
+    }
+
+    .empty-state p {
+      margin: 0 0 20px;
+      color: #666;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dashboard-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .order-card-mini {
+        flex-wrap: wrap;
+      }
+
+      .order-total {
+        order: 4;
+        width: 100%;
+        text-align: left;
+        padding-top: 8px;
+        border-top: 1px solid #eee;
+        margin-top: 8px;
+      }
+    }
+  </style>
+{% endblock %}
+

@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Galerie - The Klassiker{% endblock %}
+
+{% block body %}
+<!-- ================= PAGE HERO ================= -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="section-kicker">L'univers The Klassiker</p>
+    <h1>Notre galerie photos</h1>
+    <p class="section-subtitle">Découvrez notre restaurant, notre cuisine et nos spécialités.</p>
+  </div>
+</section>
+
+<!-- ================= GALERIE ================= -->
+<section class="section section-beige">
+  {# Define local gallery images #}
+  {% set localGalleryImages = [
+    'galerie-11.webp', 'galerie-12.webp', 'galerie-13.webp', 'galerie-14.webp', 'galerie-15.webp',
+    'galerie-16.webp', 'galerie-17.webp', 'galerie-18.webp', 'galerie-19.webp', 'galerie-20.webp',
+    'galerie-21.webp', 'galerie-22.webp', 'galerie-23.webp', 'galerie-24.webp', 'galerie-25.webp',
+    'galerie-26.webp', 'galerie-27.webp', 'galerie-28.webp', 'galerie-29.webp', 'hero1.webp', 'livraison.webp'
+  ] %}
+  
+  {# Get the first photo or fallback #}
+  {% set firstPhoto = photos[0] %}
+  {% set firstPhotoSrc = firstPhoto ? (firstPhoto.filename in localGalleryImages ? asset('build/images/' ~ firstPhoto.filename) : asset('uploads/' ~ firstPhoto.filename)) : asset('build/images/galerie-11.webp') %}
+  
+  <div class="gallery" data-animate="fade-up">
+    <div class="gallery-main-wrap">
+      <button class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="Image précédente">‹</button>
+      <div class="gallery-main">
+        <img id="galleryMain" src="{{ firstPhotoSrc }}" alt="Ambiance du restaurant The Klassiker">
+      </div>
+      <button class="gallery-arrow gallery-next" id="galleryNext" aria-label="Image suivante">›</button>
+    </div>
+
+    <div class="gallery-thumbs">
+      {% for photo in photos %}
+        {% set photoSrc = photo.filename in localGalleryImages ? asset('build/images/' ~ photo.filename) : asset('uploads/' ~ photo.filename) %}
+      <button class="gallery-thumb{% if loop.first %} is-active{% endif %}" data-index="{{ loop.index0 }}" data-img="{{ photoSrc }}">
+        <img src="{{ photoSrc }}" alt="{{ photo.altText|default('Photo ' ~ loop.index) }}">
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="gallery-lightbox" id="galleryLightbox" aria-hidden="true">
+    <div class="lightbox-backdrop" id="galleryLightboxBackdrop"></div>
+    <div class="lightbox-inner">
+      <button class="lightbox-close" id="galleryLightboxClose" aria-label="Fermer l'image">&times;</button>
+      <img id="lightboxImg" src="{{ firstPhotoSrc }}" alt="Photo en grand - The Klassiker">
+    </div>
+  </div>
+</section>
+
+<!-- ================= INFOS PRATIQUES ============ -->
+<section class="section section-red" id="infos">
+  <div class="info-grid">
+    <div class="info-block" data-animate="fade-up">
+      <h3>Infos & contact</h3>
+      <p><strong>Téléphone :</strong> <a href="tel:0164993777">01 64 99 37 77</a></p>
+      <p><strong>Email :</strong> <a href="mailto:the.klassiker@gmail.com">the.klassiker@gmail.com</a></p>
+    </div>
+
+    <div class="info-block" data-animate="fade-up">
+      <h3>Horaires</h3>
+      {% for hours in openingHours %}
+        <p>{{ hours.dayName }} : {{ hours.formattedHours }}</p>
+      {% endfor %}
+    </div>
+
+    <div class="info-block" data-animate="fade-up">
+      <h3>Adresse</h3>
+      <p>12 Cours Monseigneur Roméro</p>
+      <p>91000 Évry-Courcouronnes</p>
+      <a href="https://maps.app.goo.gl/5J1WgXMsoHFuXQrp8" target="_blank" class="btn-link">
+        Voir sur la carte
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

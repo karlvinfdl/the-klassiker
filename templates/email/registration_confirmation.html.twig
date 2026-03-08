@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Bienvenue chez The Klassiker</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #0b1b32, #9a1515); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: #fff8e8; margin: 0; font-size: 28px;">The Klassiker</h1>
+    <p style="color: #ffbc00; margin: 5px 0 0;">Smash Burgers & Kebabs</p>
+  </div>
+  
+  <div style="background: #fff; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <h2 style="color: #0b1b32; margin-top: 0;">Bienvenue {{ user.firstName }} ! 🎉</h2>
+    
+    <p>Votre compte a été créé avec succès chez <strong>The Klassiker</strong>.</p>
+    
+    <p>Vous pouvez maintenant :</p>
+    <ul>
+      <li>Commander plus rapidement</li>
+      <li>Suivre vos commandes</li>
+      <li>Profiter de promotions exclusives</li>
+    </ul>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="{{ url('app_order') }}" style="background: #ffbc00; color: #0b1b32; padding: 14px 28px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">Commander maintenant</a>
+    </div>
+    
+    <p style="font-size: 14px; color: #666;">
+      Une question ? Contactez-nous à <a href="mailto:the.klassiker@gmail.com" style="color: #9a1515;">the.klassiker@gmail.com</a>
+    </p>
+  </div>
+  
+  <div style="text-align: center; margin-top: 20px; font-size: 12px; color: #999;">
+    <p>© {{ 'now'|date('Y') }} The Klassiker - Évry-Courcouronnes</p>
+  </div>
+</body>
+</html>
+

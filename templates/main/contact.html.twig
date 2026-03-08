@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact - The Klassiker{% endblock %}
+
+{% block body %}
+  <!-- ================= HERO ================= -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="section-kicker">Nous contacter</p>
+      <h1>Contactez-nous</h1>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="page-contact section section-beige">
+    <div class="contact-grid-modern">
+      <!-- Formulaire de contact -->
+      <div class="contact-card">
+        <h2>Envoyez-nous un message</h2>
+        <p class="contact-intro">
+          Une question ? Une suggestion ? N'hésitez pas à nous contacter, nous répondons généralement sous 24-48h.
+        </p>
+
+        {% if success %}
+          <div class="alert alert-success">
+            <strong>Merci !</strong> Votre message a été envoyé avec succès. Nous vous répondrons sous peu.
+          </div>
+        {% endif %}
+
+        {% if error %}
+          <div class="alert alert-danger">
+            {{ error }}
+          </div>
+        {% endif %}
+
+        {{ form_start(form, {'attr': {'class': 'contact-form'}}) }}
+          <div class="form-group">
+            {{ form_label(form.firstName) }}
+            {{ form_widget(form.firstName) }}
+            {{ form_errors(form.firstName) }}
+          </div>
+
+          <div class="form-group">
+            {{ form_label(form.lastName) }}
+            {{ form_widget(form.lastName) }}
+            {{ form_errors(form.lastName) }}
+          </div>
+
+          <div class="form-group">
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email) }}
+            {{ form_errors(form.email) }}
+          </div>
+
+          <div class="form-group">
+            {{ form_label(form.phone) }}
+            {{ form_widget(form.phone) }}
+            {{ form_errors(form.phone) }}
+          </div>
+
+          <div class="form-group">
+            {{ form_label(form.subject) }}
+            {{ form_widget(form.subject) }}
+            {{ form_errors(form.subject) }}
+          </div>
+
+          <div class="form-group">
+            {{ form_label(form.message) }}
+            {{ form_widget(form.message) }}
+            {{ form_errors(form.message) }}
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">
+            Envoyer le message
+          </button>
+          
+          <p class="form-note">
+            En soumettant ce formulaire, vous acceptez que vos données soient utilisées pour répondre à votre demande.
+          </p>
+        {{ form_end(form) }}
+      </div>
+
+      <!-- Informations de contact -->
+      <div class="contact-card contact-card-dark">
+        <h2>Nos coordonnées</h2>
+        
+        <div class="contact-infos">
+          <p>
+            <strong>Adresse :</strong><br>
+            12 Cours Monseigneur Roméro<br>
+            91000 Évry-Courcouronnes
+          </p>
+          
+          <p>
+            <strong>Téléphone :</strong><br>
+            <a href="tel:0164993777">01 64 99 37 77</a>
+          </p>
+          
+          <p>
+            <strong>Email :</strong><br>
+            <a href="mailto:the.klassiker@gmail.com">the.klassiker@gmail.com</a>
+          </p>
+          
+          <p>
+            <strong>Réseaux sociaux :</strong>
+          </p>
+          <div class="social-links" style="margin-top: 8px;">
+            <a href="https://www.facebook.com/p/The-Klassiker-100070645848253/?locale=fr_FR" target="_blank" aria-label="Facebook" style="font-size: 1.5rem; margin-right: 15px;">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://www.instagram.com/theklassiker/" target="_blank" aria-label="Instagram" style="font-size: 1.5rem; margin-right: 15px;">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.tiktok.com/@the.klassiker" target="_blank" aria-label="TikTok" style="font-size: 1.5rem;">
+              <i class="fab fa-tiktok"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

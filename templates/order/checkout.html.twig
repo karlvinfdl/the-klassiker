@@ -1,0 +1,384 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Checkout - The Klassiker{% endblock %}
+
+{% block body %}
+  <!-- ================= PAGE HERO ================= -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="hero-badge">Commande</p>
+      <h1>Finaliser<span>commande</span></h1>
+    </div>
+  </section>
+
+  <!-- ================= CHECKOUT ================= -->
+  <section class="section section-beige">
+    <div class="checkout-container">
+      <div class="checkout-form-section">
+        <h2>Vos informations</h2>
+        
+        {{ form_start(form, {'attr': {'class': 'checkout-form'}}) }}
+          
+          <div class="form-section">
+            <h3>Mode de commande</h3>
+            <div class="type-selection">
+              <label class="type-option">
+                {{ form_widget(form.type[0]) }}
+                <span class="type-option-content">
+                  <i class="fas fa-shopping-bag"></i>
+                  <strong>Click & Collect</strong>
+                  <small>Venez récupérer au restaurant</small>
+                </span>
+              </label>
+              <label class="type-option">
+                {{ form_widget(form.type[1]) }}
+                <span class="type-option-content">
+                  <i class="fas fa-motorcycle"></i>
+                  <strong>Livraison</strong>
+                  <small>Livré chez vous</small>
+                </span>
+              </label>
+            </div>
+            {{ form_errors(form.type) }}
+          </div>
+
+          <div class="form-section">
+            <h3>Coordonnées</h3>
+            
+            <div class="form-group">
+              {{ form_label(form.customerName) }}
+              {{ form_widget(form.customerName) }}
+              {{ form_errors(form.customerName) }}
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                {{ form_label(form.customerPhone) }}
+                {{ form_widget(form.customerPhone) }}
+                {{ form_errors(form.customerPhone) }}
+              </div>
+              <div class="form-group">
+                {{ form_label(form.customerEmail) }}
+                {{ form_widget(form.customerEmail) }}
+                {{ form_errors(form.customerEmail) }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section" id="delivery-address-section" style="display: none;">
+            <h3>Adresse de livraison</h3>
+            <div class="form-group">
+              {{ form_label(form.deliveryAddress) }}
+              {{ form_widget(form.deliveryAddress) }}
+              {{ form_errors(form.deliveryAddress) }}
+              <small>Zone de livraison : Évry-Courcouronnes et surroundings</small>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Notes spéciales</h3>
+            <div class="form-group">
+              {{ form_label(form.comments) }}
+              {{ form_widget(form.comments) }}
+              {{ form_errors(form.comments) }}
+              <small>Allergies, instructions spéciales...</small>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full btn-lg">
+            Confirmer la commande
+          </button>
+
+        {{ form_end(form) }}
+      </div>
+
+      <div class="checkout-summary">
+        <h3>Récapitulatif</h3>
+        
+        <div class="checkout-items">
+          {% for item in cart %}
+            <div class="checkout-item">
+              <span class="checkout-item-qty">{{ item.quantity }}x</span>
+              <span class="checkout-item-name">{{ item.dish_name }}</span>
+              <span class="checkout-item-price">{{ (item.quantity * item.unit_price)|number_format(2, ',', ' ') }} €</span>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="checkout-total">
+          <span>Total</span>
+          <span class="checkout-total-amount">{{ cartTotal|number_format(2, ',', ' ') }} €</span>
+        </div>
+
+        <a href="{{ path('app_order_cart') }}" class="btn-link">
+          ← Modifier le panier
+        </a>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .checkout-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 40px;
+      grid-template-columns: 1fr 360px;
+    }
+
+    .checkout-form-section {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .checkout-form-section h2 {
+      margin: 0 0 24px;
+      font-size: 1.3rem;
+      color: #0b1b32;
+    }
+
+    .checkout-form h3 {
+      font-size: 1rem;
+      color: #0b1b32;
+      margin: 0 0 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .form-section {
+      margin-bottom: 28px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .form-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .type-selection {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .type-option {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .type-option input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .type-option-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .type-option-content i {
+      font-size: 1.8rem;
+      color: #0b1b32;
+      margin-bottom: 8px;
+    }
+
+    .type-option-content strong {
+      color: #0b1b32;
+      font-size: 0.95rem;
+    }
+
+    .type-option-content small {
+      color: #888;
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+
+    .type-option input:checked + .type-option-content {
+      border-color: #ffbc00;
+      background: rgba(255, 188, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0b1b32;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #ffbc00;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .form-group .form-error {
+      color: #c00;
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .checkout-summary {
+      background: #fff;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .checkout-summary h3 {
+      margin: 0 0 20px;
+      font-size: 1.1rem;
+      color: #0b1b32;
+    }
+
+    .checkout-items {
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+
+    .checkout-item {
+      display: flex;
+      gap: 8px;
+      padding: 8px 0;
+      font-size: 0.9rem;
+    }
+
+    .checkout-item-qty {
+      color: #ffbc00;
+      font-weight: 600;
+      min-width: 32px;
+    }
+
+    .checkout-item-name {
+      flex: 1;
+      color: #0b1b32;
+    }
+
+    .checkout-item-price {
+      font-weight: 600;
+    }
+
+    .checkout-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .checkout-total-amount {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #9a1515;
+    }
+
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-lg {
+      padding: 16px 24px;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .checkout-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .checkout-summary {
+        position: static;
+        order: -1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .type-selection {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gestion de l'affichage de l'adresse de livraison
+      const typeInputs = document.querySelectorAll('input[name="order[type]"]');
+      const deliverySection = document.getElementById('delivery-address-section');
+      
+      function toggleDeliveryAddress() {
+        const deliveryInput = document.querySelector('input[name="order[type]"][value="delivery"]');
+        if (deliveryInput && deliveryInput.checked) {
+          deliverySection.style.display = 'block';
+        } else {
+          deliverySection.style.display = 'none';
+        }
+      }
+      
+      typeInputs.forEach(input => {
+        input.addEventListener('change', toggleDeliveryAddress);
+      });
+      
+      // Initial check
+      toggleDeliveryAddress();
+    });
+  </script>
+{% endblock %}
+

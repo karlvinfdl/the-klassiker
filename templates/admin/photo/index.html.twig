@@ -1,0 +1,75 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Photos - The Klassiker Admin{% endblock %}
+{% block page_title %}Photos Galerie{% endblock %}
+
+{% block body %}
+<div class="table-card">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Liste des photos</h2>
+    <a href="{{ path('admin_photo_new') }}" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Nouvelle photo
+    </a>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Image</th>
+        <th>Texte alternatif</th>
+        <th>Ordre</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for photo in photos %}
+      <tr>
+        <td>{{ photo.id }}</td>
+        <td>
+          {# Check if it's a local image (from build/images/) or uploaded image (from uploads/) #}
+          {% set localGalleryImages = ['galerie-11.webp', 'galerie-12.webp', 'galerie-13.webp', 'galerie-14.webp', 'galerie-15.webp', 'galerie-16.webp', 'galerie-17.webp', 'galerie-18.webp', 'galerie-19.webp', 'galerie-20.webp', 'galerie-21.webp', 'galerie-22.webp', 'galerie-23.webp', 'galerie-24.webp', 'galerie-25.webp', 'galerie-26.webp', 'galerie-27.webp', 'galerie-28.webp', 'galerie-29.webp', 'hero1.webp', 'livraison.webp'] %}
+          {% if photo.filename in localGalleryImages %}
+            <img src="{{ asset('build/images/' ~ photo.filename) }}" alt="{{ photo.altText|default('') }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 8px;">
+          {% else %}
+            <img src="{{ asset('uploads/' ~ photo.filename) }}" alt="{{ photo.altText|default('') }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 8px;">
+          {% endif %}
+        </td>
+        <td>{{ photo.altText|default('-') }}</td>
+        <td>{{ photo.displayOrder }}</td>
+        <td>
+          {% if photo.isActive %}
+            <span class="badge-active">Actif</span>
+          {% else %}
+            <span class="badge-inactive">Inactif</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ path('admin_photo_edit', {id: photo.id}) }}" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-edit"></i>
+          </a>
+          <form method="post" action="{{ path('admin_photo_toggle', {id: photo.id}) }}" style="display: inline;">
+            <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ photo.id) }}">
+            <button type="submit" class="btn btn-sm btn-outline-{{ photo.isActive ? 'warning' : 'success' }}">
+              <i class="fas fa-{{ photo.isActive ? 'eye-slash' : 'eye' }}"></i>
+            </button>
+          </form>
+          <form method="post" action="{{ path('admin_photo_delete', {id: photo.id}) }}" style="display: inline;">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
+            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="text-center">Aucune photo trouvée.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+

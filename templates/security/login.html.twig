@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - The Klassiker Admin{% endblock %}
+
+{% block body %}
+<div class="admin-login-page">
+  <div class="login-container">
+    <div class="login-header">
+      <img src="{{ asset('build/images/logo.webp') }}" alt="The Klassiker" class="login-logo">
+      <h1>Connexion Admin</h1>
+      <p>Accédez au tableau de bord</p>
+    </div>
+
+    {# Messages d'erreur #}
+    {% if error %}
+      <div class="alert alert-danger">
+        {{ error.messageKey|trans(error.messageData, 'security') }}
+      </div>
+    {% endif %}
+
+    <form method="post" class="login-form">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+      <div class="form-group">
+        <label for="inputEmail">Email</label>
+        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus placeholder="votre@email.com">
+      </div>
+
+      <div class="form-group">
+        <label for="inputPassword">Mot de passe</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required placeholder="Votre mot de passe">
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" name="_remember_me" id="rememberMe" class="form-check-input">
+        <label for="rememberMe">Se souvenir de moi</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">
+        Se connecter
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Pas encore de compte ? <a href="{{ path('app_register') }}">Créer un compte</a></p>
+      <p><a href="{{ path('app_home') }}">← Retour au site</a></p>
+    </div>
+  </div>
+</div>
+
+<style>
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top left, #182c4f 0, #0B1B32 45%, #050815 100%);
+  padding: 20px;
+}
+
+.login-container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.login-header h1 {
+  font-size: 1.5rem;
+  color: #0B1B32;
+  margin-bottom: 8px;
+}
+
+.login-header p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.login-form .form-group {
+  margin-bottom: 20px;
+}
+
+.login-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #0B1B32;
+}
+
+.login-form .form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.login-form .form-control:focus {
+  border-color: #FFBC00;
+  box-shadow: 0 0 0 3px rgba(255,188,0,0.2);
+}
+
+.login-form .form-check {
+  margin-bottom: 20px;
+}
+
+.login-form .form-check label {
+  font-weight: 400;
+  color: #666;
+}
+
+.btn-primary {
+  background: #FFBC00;
+  color: #0B1B32;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #FFC300;
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.alert-danger {
+  background: #fee;
+  color: #c00;
+  border: 1px solid #fcc;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.login-footer a {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.login-footer a:hover {
+  color: #FFBC00;
+}
+</style>
+{% endblock %}
+

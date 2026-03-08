@@ -1,0 +1,302 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commander - The Klassiker{% endblock %}
+
+{% block body %}
+  <!-- ================= HERO COMMANDE ================= -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="hero-badge">Commander</p>
+      <h1>Ton burger,<br><span>ta façon.</span></h1>
+      <p class="hero-lead">
+        Choisis tes plats, on s'occupe du reste. Click & Collect ou livraison !
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= COMMANDE ================= -->
+  <section class="section section-beige" id="menu">
+    <div class="section-header" data-animate="fade-up">
+      <p class="section-kicker" style="color: #0b1b32;">Notre carte</p>
+      <h2>Compose ta commande</h2>
+    </div>
+
+    <!-- Mini panier flottant -->
+    <div class="cart-float" id="cartFloat">
+      <a href="{{ path('app_order_cart') }}" class="cart-float-link">
+        <i class="fas fa-shopping-basket"></i>
+        <span class="cart-count">{{ cartCount }}</span>
+        <span class="cart-label">Panier</span>
+      </a>
+    </div>
+
+    <div class="order-menu-grid">
+      {% if categories %}
+        {% for category in categories %}
+          {% if category.dishes|length > 0 %}
+            <div class="order-category" id="category-{{ category.slug }}">
+              <h3 class="category-title">{{ category.name }}</h3>
+              <p class="category-desc">{{ category.description }}</p>
+              
+              <div class="order-items">
+                {% for dish in category.dishes %}
+                  <article class="order-item">
+                    <div class="order-item-img">
+                      {% if dish.image %}
+                        {# Check if it's a local image (from build/images/) or uploaded image (from uploads/) #}
+                        {% set localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'] %}
+                        {% if dish.image in localDishImages %}
+                          <img src="{{ asset('build/images/' ~ dish.image) }}" alt="{{ dish.name }}">
+                        {% else %}
+                          <img src="{{ asset('uploads/' ~ dish.image) }}" alt="{{ dish.name }}">
+                        {% endif %}
+                      {% else %}
+                        <img src="{{ asset('build/images/' ~ (loop.index % 12 + 1) ~ '-.webp') }}" alt="{{ dish.name }}">
+                      {% endif %}
+                    </div>
+                    <div class="order-item-body">
+                      <h4>{{ dish.name }}</h4>
+                      <p>{{ dish.description }}</p>
+                      <span class="order-item-price">{{ dish.price|number_format(2, ',', ' ') }} €</span>
+                      
+                      <form action="{{ path('app_order_add') }}" method="POST" class="add-to-cart-form">
+                        <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-add-cart">
+                          <i class="fas fa-plus"></i> Ajouter
+                        </button>
+                      </form>
+                    </div>
+                  </article>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <div class="alert alert-warning">
+          <p>Le menu n'est pas disponible pour le moment. Veuillez nous contacter.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="section-actions">
+      {% if cartCount > 0 %}
+        <a href="{{ path('app_order_cart') }}" class="btn btn-primary btn-lg">
+          Voir mon panier ({{ cartCount }} article{{ cartCount > 1 ? 's' : '' }})
+        </a>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ================= INFOS LIVRAISON ================= -->
+  <section class="section section-dark" id="infos">
+    <div class="info-grid">
+      <div class="info-block">
+        <h3><i class="fas fa-clock"></i> Horaires</h3>
+        <p>Lundi au jeudi : 11h – 23h</p>
+        <p>Vendredi : 11h – 00h</p>
+        <p>Samedi & dimanche : 11h – 00h</p>
+      </div>
+      <div class="info-block">
+        <h3><i class="fas fa-map-marker-alt"></i> Adresse</h3>
+        <p>12 Cours Monseigneur Roméro</p>
+        <p>91000 Évry-Courcouronnes</p>
+      </div>
+      <div class="info-block">
+        <h3><i class="fas fa-phone"></i> Contact</h3>
+        <p>01 64 99 37 77</p>
+        <p>the.klassiker@gmail.com</p>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    /* Cart float */
+    .cart-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+    }
+    
+    .cart-float-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-yellow);
+      color: #0b1b32;
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease;
+    }
+    
+    .cart-float-link:hover {
+      transform: translateY(-2px);
+    }
+    
+    .cart-count {
+      background: #9a1515;
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    /* Menu Grid */
+    .order-menu-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .order-category {
+      margin-bottom: 40px;
+    }
+
+    .category-title {
+      font-size: 1.4rem;
+      color: #0b1b32;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 2px solid #ffbc00;
+      padding-bottom: 8px;
+      display: inline-block;
+    }
+
+    .category-desc {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .order-items {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+
+    .order-item {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      display: flex;
+      transition: transform 0.2s ease;
+    }
+
+    .order-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .order-item-img {
+      width: 110px;
+      flex-shrink: 0;
+    }
+
+    .order-item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .order-item-body {
+      padding: 12px 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .order-item-body h4 {
+      margin: 0 0 4px;
+      font-size: 1rem;
+      color: #0b1b32;
+    }
+
+    .order-item-body p {
+      margin: 0 0 8px;
+      font-size: 0.8rem;
+      color: #666;
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .order-item-price {
+      font-weight: 700;
+      color: #9a1515;
+      font-size: 1rem;
+    }
+
+    .add-to-cart-form {
+      margin-top: 8px;
+    }
+
+    .btn-add-cart {
+      background: #0b1b32;
+      color: #fff8e8;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-add-cart:hover {
+      background: #ffbc00;
+      color: #0b1b32;
+    }
+
+    .btn-lg {
+      padding: 14px 28px;
+      font-size: 1rem;
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .alert-warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    @media (max-width: 768px) {
+      .cart-float {
+        bottom: 16px;
+        right: 16px;
+      }
+      
+      .order-items {
+        grid-template-columns: 1fr;
+      }
+      
+      .order-item {
+        flex-direction: column;
+      }
+      
+      .order-item-img {
+        width: 100%;
+        height: 140px;
+      }
+    }
+  </style>
+{% endblock %}
+

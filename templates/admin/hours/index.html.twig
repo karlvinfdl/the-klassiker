@@ -1,0 +1,75 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Horaires - The Klassiker Admin{% endblock %}
+{% block page_title %}Horaires d'ouverture{% endblock %}
+
+{% block body %}
+<div class="table-card">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Liste des horaires</h2>
+    <a href="{{ path('admin_hours_new') }}" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Nouvel horaire
+    </a>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Jour</th>
+        <th>Matin</th>
+        <th>Après-midi</th>
+        <th>Fermé</th>
+        <th>Ordre</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for hours in hours %}
+      <tr>
+        <td>{{ hours.id }}</td>
+        <td><strong>{{ hours.dayName }}</strong></td>
+        <td>
+          {% if hours.morningOpen and hours.morningClose %}
+            {{ hours.morningOpen|date('H:i') }} - {{ hours.morningClose|date('H:i') }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>
+          {% if hours.afternoonOpen and hours.afternoonClose %}
+            {{ hours.afternoonOpen|date('H:i') }} - {{ hours.afternoonClose|date('H:i') }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>
+          {% if hours.isClosed %}
+            <span class="badge-inactive">Fermé</span>
+          {% else %}
+            <span class="badge-active">Ouvert</span>
+          {% endif %}
+        </td>
+        <td>{{ hours.displayOrder }}</td>
+        <td>
+          <a href="{{ path('admin_hours_edit', {id: hours.id}) }}" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-edit"></i>
+          </a>
+          <form method="post" action="{{ path('admin_hours_delete', {id: hours.id}) }}" style="display: inline;">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ hours.id) }}">
+            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet horaire ?')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="7" class="text-center">Aucun horaire trouvé.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+

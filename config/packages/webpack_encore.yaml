@@ -1,0 +1,11 @@
+webpack_encore:
+  # The path where Encore is building the assets - i.e. webpack.config.js
+  output_path: "%kernel.project_dir%/public/build"
+  # If multiple builds are defined (as shown below), you can disable the default one:
+  # disable_single_build_hint: true
+  # If you want to use an "integrity" hash on the script/style tags, you need to set the hashing strategy:
+  # script_attributes: { defer: true, integrity: 'sha512-...' }
+  # style_attributes: { integrity: 'sha512-...' }
+  # If you want to use "Entrypoint JSON", enable it. Otherwise, the default is "manifest.json"
+  # output_path: public/build
+  # cache: false

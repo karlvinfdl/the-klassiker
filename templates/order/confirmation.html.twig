@@ -1,0 +1,363 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande confirmée - The Klassiker{% endblock %}
+
+{% block body %}
+  <!-- ================= CONFIRMATION ================= -->
+  <section class="confirmation-section">
+    <div class="confirmation-card">
+      <div class="confirmation-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      
+      <h1>Commande confirmée !</h1>
+      <p class="confirmation-subtitle">Merci pour votre commande, <strong>{{ order.customerName }}</strong> !</p>
+      
+      <div class="order-number">
+        <span>N° de commande</span>
+        <strong>#{{ order.id }}</strong>
+      </div>
+
+      <div class="order-details">
+        <div class="order-detail-row">
+          <span>Type</span>
+          <span class="badge">{{ order.type == 'delivery' ? '🚗 Livraison' : '📦 Click & Collect' }}</span>
+        </div>
+        
+        {% if order.type == 'delivery' and order.deliveryAddress %}
+          <div class="order-detail-row">
+            <span>Adresse</span>
+            <span>{{ order.deliveryAddress|nl2br }}</span>
+          </div>
+        {% endif %}
+        
+        <div class="order-detail-row">
+          <span>Date</span>
+          <span>{{ order.createdAt|date('d/m/Y à H:i') }}</span>
+        </div>
+        
+        <div class="order-detail-row">
+          <span>Client</span>
+          <span>{{ order.customerName }}</span>
+        </div>
+        
+        <div class="order-detail-row">
+          <span>Téléphone</span>
+          <span>{{ order.customerPhone }}</span>
+        </div>
+        
+        {% if order.customerEmail %}
+          <div class="order-detail-row">
+            <span>Email</span>
+            <span>{{ order.customerEmail }}</span>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="order-items-summary">
+        <h3>Articles commandés</h3>
+        {% for item in order.items %}
+          <div class="order-item-line">
+            <span class="item-qty">{{ item.quantity }}x</span>
+            <span class="item-name">{{ item.dishName }}</span>
+            <span class="item-price">{{ (item.quantity * item.unitPrice)|number_format(2, ',', ' ') }} €</span>
+          </div>
+        {% endfor %}
+        
+        <div class="order-total">
+          <span>Total</span>
+          <span class="total-amount">{{ order.totalAmount|number_format(2, ',', ' ') }} €</span>
+        </div>
+      </div>
+
+      {% if order.comments %}
+        <div class="order-notes">
+          <h4>📝 Notes</h4>
+          <p>{{ order.comments|nl2br }}</p>
+        </div>
+      {% endif %}
+
+      <div class="confirmation-info">
+        <p><i class="fas fa-envelope"></i> Un email de confirmation a été envoyé{{ order.customerEmail ? ' à ' ~ order.customerEmail : '' }}</p>
+        <p><i class="fas fa-clock"></i> Temps de préparation : 15-25 minutes</p>
+      </div>
+
+      <div class="confirmation-actions">
+        <a href="{{ path('app_home') }}" class="btn btn-primary">
+          Retour à l'accueil
+        </a>
+        <a href="{{ path('app_order') }}" class="btn btn-outline">
+          Commander à nouveau
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INFOS ================= -->
+  <section class="section section-dark">
+    <div class="info-grid">
+      <div class="info-block">
+        <h3><i class="fas fa-map-marker-alt"></i> Adresse</h3>
+        <p>12 Cours Monseigneur Roméro</p>
+        <p>91000 Évry-Courcouronnes</p>
+      </div>
+      <div class="info-block">
+        <h3><i class="fas fa-clock"></i> Horaires</h3>
+        <p>Lundi au jeudi : 11h – 23h</p>
+        <p>Vendredi : 11h – 00h</p>
+        <p>Samedi & dimanche : 11h – 00h</p>
+      </div>
+      <div class="info-block">
+        <h3><i class="fas fa-phone"></i> Contact</h3>
+        <p>01 64 99 37 77</p>
+        <p>the.klassiker@gmail.com</p>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .confirmation-section {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px 60px;
+      background: radial-gradient(
+        circle at top,
+        #9a1515 0,
+        #0b1b32 40%,
+        #020617 100%
+      );
+    }
+
+    .confirmation-card {
+      max-width: 600px;
+      width: 100%;
+      background: #fff;
+      border-radius: 24px;
+      padding: 40px 32px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .confirmation-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .confirmation-icon i {
+      font-size: 3rem;
+      color: #fff;
+    }
+
+    .confirmation-card h1 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+      color: #0b1b32;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .confirmation-subtitle {
+      color: #666;
+      margin: 0 0 24px;
+      font-size: 1rem;
+    }
+
+    .order-number {
+      background: linear-gradient(135deg, #ffbc00, #ffc300);
+      padding: 16px 24px;
+      border-radius: 12px;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 28px;
+    }
+
+    .order-number span {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(11, 27, 50, 0.7);
+    }
+
+    .order-number strong {
+      font-size: 1.5rem;
+      color: #0b1b32;
+    }
+
+    .order-details {
+      text-align: left;
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .order-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .order-detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .order-detail-row span:first-child {
+      font-size: 0.85rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .order-detail-row span:last-child {
+      font-weight: 500;
+      color: #0b1b32;
+      text-align: right;
+    }
+
+    .badge {
+      background: #9a1515;
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .order-items-summary {
+      text-align: left;
+      padding: 20px;
+      border: 2px solid #0b1b32;
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+
+    .order-items-summary h3 {
+      margin: 0 0 16px;
+      font-size: 1rem;
+      color: #0b1b32;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .order-item-line {
+      display: flex;
+      gap: 12px;
+      padding: 8px 0;
+      font-size: 0.95rem;
+    }
+
+    .item-qty {
+      color: #ffbc00;
+      font-weight: 700;
+      min-width: 40px;
+    }
+
+    .item-name {
+      flex: 1;
+      color: #0b1b32;
+    }
+
+    .item-price {
+      font-weight: 600;
+    }
+
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      margin-top: 12px;
+      border-top: 2px solid #0b1b32;
+      font-weight: 700;
+    }
+
+    .total-amount {
+      font-size: 1.4rem;
+      color: #9a1515;
+    }
+
+    .order-notes {
+      background: #fff8e8;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .order-notes h4 {
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      color: #0b1b32;
+    }
+
+    .order-notes p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .confirmation-info {
+      margin-bottom: 28px;
+    }
+
+    .confirmation-info p {
+      margin: 8px 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .confirmation-info i {
+      color: #ffbc00;
+      margin-right: 8px;
+      width: 20px;
+    }
+
+    .confirmation-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-outline {
+      border: 2px solid #0b1b32;
+      background: transparent;
+      color: #0b1b32;
+    }
+
+    .btn-outline:hover {
+      background: #0b1b32;
+      color: #fff;
+    }
+
+    @media (max-width: 600px) {
+      .confirmation-card {
+        padding: 28px 20px;
+      }
+      
+      .confirmation-actions {
+        flex-direction: column;
+      }
+      
+      .confirmation-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+{% endblock %}
+

@@ -1,0 +1,434 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}The Klassiker — Smash Burgers & Kebabs à Évry-Courcouronnes{% endblock %}
+
+{% block body %}
+  <!-- ================= HERO ================= -->
+  <section id="accueil" class="hero-section">
+    <div class="hero-inner">
+      <div class="hero-content" data-animate="fade-up">
+        <p class="hero-badge">Évry-Courcouronnes • Smash Burgers • Kebab Berlinois</p>
+        <h1>
+          Le vrai goût,<br>
+          <span>sans compromis.</span>
+        </h1>
+        <p class="hero-lead">
+          Viande smashée à la minute, sauces maison, portions généreuses :
+          The Klassiker remet le burger & le kebab au centre du game.
+        </p>
+
+        <div class="hero-actions">
+          <a href="{{ path('app_order') }}" class="btn btn-primary">Commander maintenant</a>
+          <a href="{{ path('app_order') }}#menu" class="btn btn-ghost">
+            Voir la carte
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="hero-infos">
+          <div>
+            <span class="info-label">Service</span>
+            <span class="info-value">Sur place • À emporter • Livraison</span>
+          </div>
+          <div>
+            <span class="info-label">Adresse</span>
+            <span class="info-value">12 Cours Monseigneur Roméro, 91000 Évry-Courcouronnes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-animate="zoom-in">
+        <div class="hero-photo">
+          <img src="{{ asset('build/images/hero1.webp') }}" alt="Assortiment de burgers The Klassiker">
+        </div>
+        <div class="hero-highlight">
+          <p class="highlight-title">Signature Smash</p>
+          <p>Steak frais smashé, cheddar fondant, pickles maison, sauce Klassiker.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOC LIVRAISON ============ -->
+  <section class="delivery-strip" aria-label="Livraison disponible">
+    <div class="delivery-inner">
+      <div class="delivery-icon">
+        <img src="{{ asset('build/images/livraison.webp') }}" alt="">
+      </div>
+      <div class="delivery-text">
+        <h2>Livraison disponible</h2>
+        <p>Uber Eats & Deliveroo — directement chez vous à Évry-Courcouronnes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NOTRE CARTE / PRODUITS ============ -->
+  <section id="carte" class="section section-beige">
+    <div class="section-header" data-animate="fade-up">
+      <p class="section-kicker">Notre carte</p>
+      <h2>Les incontournable The Klassiker</h2>
+      <p class="section-subtitle">
+        Smash burgers, chicken, kebabs, boissons, sides & desserts.
+      </p>
+    </div>
+
+    <div class="cards-grid" data-animate="fade-up">
+      {# Afficher les plats par catégorie #}
+      {% if categories %}
+        {% set globalIndex = 0 %}
+        {% for category in categories %}
+          {% if category.dishes|length > 0 %}
+            {% for dish in category.dishes %}
+              {% set globalIndex = globalIndex + 1 %}
+              <a href="{{ path('app_order') }}#category-{{ category.slug }}" class="food-card-link">
+                <article class="food-card{% if globalIndex > 4 %} food-card-to-hide{% endif %}">
+                  {% if dish.image %}
+                    {# Check if it's a local image (from build/images/) or uploaded image (from uploads/) #}
+                    {% set localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'] %}
+                    {% if dish.image in localDishImages %}
+                      <img src="{{ asset('build/images/' ~ dish.image) }}" alt="{{ dish.name }}">
+                    {% else %}
+                      <img src="{{ asset('uploads/' ~ dish.image) }}" alt="{{ dish.name }}">
+                    {% endif %}
+                  {% else %}
+                    <img src="{{ asset('build/images/' ~ random(['1-.webp', '2-.webp', '3-.webp', '4-.webp'])) }}" alt="{{ dish.name }}">
+                  {% endif %}
+                  <div class="food-body">
+                    <h3>{{ dish.name }}</h3>
+                    <p>{{ dish.description }}</p>
+                    <div class="food-footer">
+                      <span class="food-tag">{{ category.name }}</span>
+                      <span class="food-price">{{ dish.price|number_format(2, ',', ' ') }} €</span>
+                    </div>
+                  </div>
+                </article>
+              </a>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        {# Fallback: afficher les plats statiques si aucune catégorie en base #}
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card">
+            <img src="{{ asset('build/images/1-.webp') }}" alt="Tasty & Crousty">
+            <div class="food-body">
+              <h3>Tasty & Crousty</h3>
+              <p>Notre sélection croustillante : généreuse, fraîche et ultra gourmande.</p>
+              <div class="food-footer">
+                <span class="food-tag">Crousti</span>
+                <span class="food-price">8,90 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card">
+            <img src="{{ asset('build/images/2-.webp') }}" alt="Smash Beef Burgers">
+            <div class="food-body">
+              <h3>Smash Beef Burgers</h3>
+              <p>Burgers smashés à la minute pour un goût unique et authentique.</p>
+              <div class="food-footer">
+                <span class="food-tag">Smash</span>
+                <span class="food-price">9,90 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card">
+            <img src="{{ asset('build/images/3-.webp') }}" alt="Chicken Burgers">
+            <div class="food-body">
+              <h3>Chicken Burgers</h3>
+              <p>Poulet croustillant, sauces maison et recettes ultra généreuses.</p>
+              <div class="food-footer">
+                <span class="food-tag">Croustillant</span>
+                <span class="food-price">9,50 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card">
+            <img src="{{ asset('build/images/4-.webp') }}" alt="Fish Burgers">
+            <div class="food-body">
+              <h3>Fish Burgers</h3>
+              <p>Poisson pané doré et croustillant à chaque bouchée.</p>
+              <div class="food-footer">
+                <span class="food-tag">Poisson</span>
+                <span class="food-price">9,90 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card food-card-to-hide">
+            <img src="{{ asset('build/images/5-.webp') }}" alt="Kebabs Berlinois">
+            <div class="food-body">
+              <h3>Kebabs Berlinois</h3>
+              <p>La vraie recette berlinoise : gourmande, fraîche, généreuse.</p>
+              <div class="food-footer">
+                <span class="food-tag">Berlin</span>
+                <span class="food-price">10,90 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card food-card-to-hide">
+            <img src="{{ asset('build/images/6-.webp') }}" alt="Box Berlinoise">
+            <div class="food-body">
+              <h3>Box Berlinoise</h3>
+              <p>Un assortiment parfait pour les amateurs de grillades.</p>
+              <div class="food-footer">
+                <span class="food-tag">Box</span>
+                <span class="food-price">12,90 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card food-card-to-hide">
+            <img src="{{ asset('build/images/7-.webp') }}" alt="Salades">
+            <div class="food-body">
+              <h3>Salades</h3>
+              <p>Fraîches, équilibrées et préparées avec des produits de qualité.</p>
+              <div class="food-footer">
+                <span class="food-tag">Frais</span>
+                <span class="food-price">8,50 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card food-card-to-hide">
+            <img src="{{ asset('build/images/8-.webp') }}" alt="Menu Petite Faim">
+            <div class="food-body">
+              <h3>Menu Petite Faim</h3>
+              <p>Pour les petites envies : rapide et efficace.</p>
+              <div class="food-footer">
+                <span class="food-tag">Rapide</span>
+                <span class="food-price">7,90 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card food-card-to-hide">
+            <img src="{{ asset('build/images/9-.webp') }}" alt="Amuses-bouches">
+            <div class="food-body">
+              <h3>Amuses-bouches</h3>
+              <p>Onion rings, mozzarella sticks, tenders, wings… parfaits à partager.</p>
+              <div class="food-footer">
+                <span class="food-tag">À partager</span>
+                <span class="food-price">5,90 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card food-card-to-hide">
+            <img src="{{ asset('build/images/10-.webp') }}" alt="Cocktails sans alcool">
+            <div class="food-body">
+              <h3>Cocktails</h3>
+              <p>Des boissons fraîches, fruitées et faites maison.</p>
+              <div class="food-footer">
+                <span class="food-tag">Fait maison</span>
+                <span class="food-price">4,90 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card food-card-to-hide">
+            <img src="{{ asset('build/images/11-.webp') }}" alt="Boissons">
+            <div class="food-body">
+              <h3>Boissons</h3>
+              <p>Un large choix de boissons fraîches.</p>
+              <div class="food-footer">
+                <span class="food-tag">Soft</span>
+                <span class="food-price">2,50 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+
+        <a href="{{ path('app_order') }}#menu" class="food-card-link">
+          <article class="food-card food-card-to-hide">
+            <img src="{{ asset('build/images/12-.webp') }}" alt="Desserts">
+            <div class="food-body">
+              <h3>Desserts</h3>
+              <p>Une touche sucrée pour finir votre repas en beauté.</p>
+              <div class="food-footer">
+                <span class="food-tag">Gourmand</span>
+                <span class="food-price">4,50 €</span>
+              </div>
+            </div>
+          </article>
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="section-actions">
+      <button class="btn btn-outline" id="toggleCarte">Voir tout le menu</button>
+    </div>
+  </section>
+
+
+  <!-- ============ A PROPOS / CONCEPT ============ -->
+  <section class="section section-dark" id="concept">
+    <div class="section-inner">
+      <div class="section-text" data-animate="fade-up">
+        <p class="section-kicker">Notre concept</p>
+        <h2>Entre burger US et kebab berlinois</h2>
+        <p class="section-subtitle">
+          The Klassiker, c'est le spot où tu peux venir avec ta team sans te prendre la tête :
+          burgers généreux, kebab berlinois authentique, sides qui claquent et ambiance détendue.
+        </p>
+
+        <div class="concept-grid">
+          <div class="concept-item">
+            <h3>Tout est smashé à la minute</h3>
+            <p>Pas de surgelé industriel : on smash, on toaste et on envoie direct. Résultat : juteux, croustillant, addictif.</p>
+          </div>
+          <div class="concept-item">
+            <h3>Sauces 100% maison</h3>
+            <p>Des recettes qu'on a peaufinées sur le temps, pour des burgers et kebabs qui ont leur propre identité.</p>
+          </div>
+          <div class="concept-item">
+            <h3>Esprit quartier</h3>
+            <p>Un lieu qui vit avec Évry-Courcouronnes : clients fidèles, ambiance chill, service rapide.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-visual" data-animate="zoom-in">
+        <div class="concept-photo">
+          <img src="{{ asset('build/images/galerie-21.webp') }}" alt="Salle du restaurant The Klassiker">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALERIE ============ -->
+  <section id="galerie" class="section section-beige">
+    <div class="section-header" data-animate="fade-up">
+      <p class="section-kicker">Dans la cuisine & la salle</p>
+      <h2>Une ambiance qui donne faim</h2>
+      <p class="section-subtitle">
+        Feu en cuisine, salle animée et détails gourmands : découvre l'univers The Klassiker.
+      </p>
+    </div>
+
+    <div class="gallery" data-animate="fade-up">
+      <!-- Zone image principale + flèches -->
+      <div class="gallery-main-wrap">
+        <button class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="Image précédente">&#8249;</button>
+        <div class="gallery-main">
+          <img id="galleryMain" src="{{ asset('build/images/galerie-11.webp') }}" alt="Ambiance du restaurant The Klassiker">
+        </div>
+        <button class="gallery-arrow gallery-next" id="galleryNext" aria-label="Image suivante">&#8250;</button>
+      </div>
+
+      <!-- Vignettes -->
+      <div class="gallery-thumbs">
+        {% set galleryImages = [
+          'galerie-12.webp', 'galerie-13.webp', 'galerie-14.webp', 'galerie-15.webp',
+          'galerie-16.webp', 'galerie-17.webp', 'galerie-18.webp', 'galerie-19.webp',
+          'galerie-20.webp', 'galerie-21.webp', 'galerie-22.webp', 'galerie-23.webp',
+          'galerie-24.webp', 'galerie-25.webp', 'galerie-26.webp', 'galerie-27.webp',
+          'galerie-28.webp', 'galerie-29.webp'
+        ] %}
+        
+        {% for index, img in galleryImages %}
+          <button class="gallery-thumb{% if index == 0 %} is-active{% endif %}" data-index="{{ index }}" data-img="{{ asset('build/images/' ~ img) }}">
+            <img src="{{ asset('build/images/' ~ img) }}" alt="">
+          </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="gallery-lightbox" id="galleryLightbox" aria-hidden="true">
+      <div class="lightbox-backdrop" id="galleryLightboxBackdrop"></div>
+      <div class="lightbox-inner">
+        <button class="lightbox-close" id="galleryLightboxClose" aria-label="Fermer l'image">&times;</button>
+        <img id="lightboxImg" src="{{ asset('build/images/galerie-11.webp') }}" alt="Photo en grand - The Klassiker">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INFOS PRATIQUES / CONTACT RAPIDE ============ -->
+  <section class="section section-red" id="infos">
+    <div class="info-grid">
+      <div class="info-block" data-animate="fade-up">
+        <h3>Infos & contact</h3>
+        <p><strong>Téléphone :</strong> <a href="tel:0164993777">01 64 99 37 77</a></p>
+        <p><strong>Email :</strong> <a href="mailto:the.klassiker@gmail.com">the.klassiker@gmail.com</a></p>
+      </div>
+
+      <div class="info-block" data-animate="fade-up">
+        <h3>Horaires</h3>
+        {% if openingHours|length > 0 %}
+          {% for hours in openingHours %}
+            <p>{{ hours.dayName }} : {{ hours.formattedHours }}</p>
+          {% endfor %}
+        {% else %}
+          <p>Lundi au jeudi : 11h00 – 23h00</p>
+          <p>Vendredi : 11h00 – 13h00 / 14h30 – 00h00</p>
+          <p>Samedi & dimanche : 11h00 – 00h00</p>
+        {% endif %}
+      </div>
+
+      <div class="info-block" data-animate="fade-up">
+        <h3>Adresse</h3>
+        <p>12 Cours Monseigneur Roméro</p>
+        <p>91000 Évry-Courcouronnes</p>
+        <a href="https://maps.app.goo.gl/5J1WgXMsoHFuXQrp8" target="_blank" class="btn-link">
+          Voir sur la carte
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMMANDER ============ -->
+  <section id="commander" class="section section-beige">
+    <div class="section-header" data-animate="fade-up">
+      <p class="section-kicker">Commander</p>
+      <h2>Tu manges où ce soir ?</h2>
+      <p class="section-subtitle">
+        Choisis ton mode de commande, on s'occupe du reste.
+      </p>
+    </div>
+
+    <div class="order-grid" data-animate="fade-up">
+      <article class="order-card">
+        <h3>Uber Eats</h3>
+        <p>Commande en quelques clics et suis ton livreur en direct.</p>
+        <a href="https://www.ubereats.com/store/the-klassiker/oxU8xIqhRYiAumLfj2l0Tg" class="btn btn-outline-sm" target="_blank">Ouvrir Uber Eats</a>
+      </article>
+
+      <article class="order-card">
+        <h3>Deliveroo</h3>
+        <p>Retrouve The Klassiker sur Deliveroo et fais-toi livrer.</p>
+        <a href="https://deliveroo.fr/menu/paris/evry-courcouronnes/the-klassiker" class="btn btn-outline-sm" target="_blank">Ouvrir Deliveroo</a>
+      </article>
+
+      <article class="order-card">
+        <h3>Sur place / À emporter</h3>
+        <p>Passe directement au resto, on te prépare ça minute.</p>
+        <a href="{{ path('app_contact') }}" class="btn btn-outline-sm">Nous trouver</a>
+      </article>
+    </div>
+  </section>
+{% endblock %}
+

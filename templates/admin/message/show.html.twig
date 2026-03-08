@@ -1,0 +1,47 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Message - The Klassiker Admin{% endblock %}
+{% block page_title %}Détails du message{% endblock %}
+
+{% block body %}
+<div class="table-card">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Message de {{ message.firstName }} {{ message.lastName }}</h2>
+    <div>
+      <a href="{{ path('admin_message_index') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Retour
+      </a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <p><strong>Nom :</strong> {{ message.firstName }} {{ message.lastName }}</p>
+      <p><strong>Email :</strong> <a href="mailto:{{ message.email }}">{{ message.email }}</a></p>
+      {% if message.phone %}
+      <p><strong>Téléphone :</strong> <a href="tel:{{ message.phone }}">{{ message.phone }}</a></p>
+      {% endif %}
+      <p><strong>Sujet :</strong> {{ message.subject }}</p>
+      <p><strong>Date :</strong> {{ message.createdAt|date('d/m/Y à H:i') }}</p>
+      <p><strong>Statut :</strong> 
+        {% if message.isRead %}
+          <span class="badge-active">Lu</span>
+        {% else %}
+          <span class="badge-inactive">Non lu</span>
+        {% endif %}
+      </p>
+    </div>
+    <div class="col-md-6">
+      <p><strong>Message :</strong></p>
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; white-space: pre-wrap;">{{ message.message }}</div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a href="mailto:{{ message.email }}?subject=Re: {{ message.subject }}" class="btn btn-primary">
+      <i class="fas fa-reply"></i> Répondre par email
+    </a>
+  </div>
+</div>
+{% endblock %}
+
