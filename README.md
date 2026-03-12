@@ -1,485 +1,301 @@
-# the-klassiker
+# The Klassiker — Site Restaurant Symfony 7
 
-# The Klassiker - Site Restaurant Symfony 7
+**Smash Burgers & Kebabs Berlinois — Évry-Courcouronnes (91000)**
 
-## Description du Projet
-
-**The Klassiker** est un site web pour un restaurant de burgers et kebabs situé à Évry-Courcouronnes (France). Le site a été développé avec Symfony 7 et offre une expérience moderne et responsive pour les clients.
-
-### Caractéristiques principales
-
-- 🏠 **Page d'accueil** avec présentation du restaurant, menu, galerie photos
-- 🍔 **Menu dynamique** avec catégories de plats gérées depuis la base de données
-- 🛒 **Système de commande en ligne** avec panier, checkout et confirmation
-- 👤 **Espace client** avec historique des commandes et profil
-- 📸 **Galerie photos** pour présenter l'ambiance du restaurant
-- 📧 **Formulaire de contact** sécurisé avec validation et notifications email
-- 👨‍💼 **Dashboard administrateur** pour gérer le contenu
-- 📱 **Design responsive** compatible mobile/tablette/desktop
+> Site web full-stack développé avec Symfony 7, Doctrine ORM, Twig et Webpack Encore.
 
 ---
 
-## Architecture Technique
+## Démarrage rapide
 
-### Stack Technique
+```bash
+# Installer les dépendances
+composer install && npm install
 
-- **Framework** : Symfony 7.0
-- **PHP** : 8.2+
-- **Base de données** : MySQL 8
-- **ORM** : Doctrine ORM
-- **Templating** : Twig
-- **Sécurité** : Symfony Security (bcrypt, CSRF)
-- **Assets** : Webpack Encore
-- **Email** : Symfony Mailer
+# Configurer l'environnement
+cp .env .env.local
+# → renseigner DATABASE_URL, MAILER_DSN, APP_SECRET
 
-### Structure du Projet
+# Initialiser la base de données
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+php bin/console doctrine:fixtures:load   # données de démo
+
+# Compiler les assets
+npm run build
+
+# Lancer le serveur
+php bin/console server:run
+```
+
+**Accès admin :** `admin@theklassiker.fr` / `Klassiker2025!`
+> ⚠️ Changer le mot de passe après la première connexion.
+
+---
+
+## Stack Technique
+
+| Catégorie       | Technologie                              |
+|-----------------|------------------------------------------|
+| Framework       | Symfony 7.0                              |
+| PHP             | 8.2+                                     |
+| Base de données | MySQL 8                                  |
+| ORM             | Doctrine ORM 2.17                        |
+| Templates       | Twig                                     |
+| CSS             | CSS3 custom + Bootstrap 5.3 (partiel)   |
+| JavaScript      | Vanilla JS (ES6+)                        |
+| Polices         | Google Fonts — Montserrat                |
+| Icônes          | Font Awesome 6.5                         |
+| Build tools     | Webpack Encore + npm                     |
+| Email           | Symfony Mailer (SMTP)                    |
+| Hébergement     | o2switch (PHP 8.3, MySQL 8, Linux)       |
+
+---
+
+## Structure du Projet
 
 ```
 the-klassiker/
-├── assets/                  # Assets frontend (Webpack)
-│   ├── script/              # JavaScript
-│   └── styles/             # SCSS/CSS
-├── config/                  # Configuration Symfony
-│   ├── packages/           # Paquets (doctrine, security, twig, etc.)
+├── assets/
+│   ├── images/               # 29 images WebP (galerie + produits)
+│   ├── script/
+│   │   └── app.js            # JS principal (galerie, menu, animations)
+│   └── styles/
+│       └── app.css           # CSS principal (design complet responsive)
+├── config/
+│   ├── packages/             # doctrine.yaml, security.yaml, mailer.yaml…
 │   ├── routes.yaml
 │   └── services.yaml
-├── migrations/              # Migrations Doctrine
-├── public/                  # Racine web
-│   ├── uploads/            # Images uploadées
+├── migrations/               # 3 migrations Doctrine
+├── public/
+│   ├── build/                # Assets compilés (Webpack)
+│   ├── uploads/              # Images uploadées via admin
+│   ├── .htaccess             # Routing Apache
 │   └── index.php
 ├── src/
-│   ├── Command/            # Commandes console
-│   ├── Controller/         # Contrôleurs
-│   │   ├── Admin/         # CRUD administrateur
+│   ├── Command/              # CreateAdminCommand
+│   ├── Controller/
+│   │   ├── Admin/            # DashboardController, CategoryController,
+│   │   │                     # DishController, PhotoController,
+│   │   │                     # MessageController, HoursController, UserController
 │   │   ├── MainController.php
-│   │   ├── ContactController.php
 │   │   ├── OrderController.php
+│   │   ├── ContactController.php
+│   │   ├── SecurityController.php
 │   │   ├── RegistrationController.php
-│   │   └── SecurityController.php
-│   ├── DataFixtures/       # Données initiales
-│   ├── Entity/             # Entités Doctrine
-│   ├── Form/               # Formulaires Symfony
-│   ├── Repository/         # Repositories Doctrine
-│   ├── Security/           # Authentification
-│   └── Service/            # Services (Email)
-└── templates/              # Templates Twig
-    ├── admin/              # Templates admin
-    ├── main/               # Templates publics
-    ├── order/              # Templates commande
-    ├── user/               # Templates utilisateur
-    ├── security/           # Login
-    └── email/              # Emails
+│   │   └── UserController.php
+│   ├── DataFixtures/
+│   │   └── AppFixtures.php
+│   ├── Entity/               # User, Category, Dish, Order, OrderItem,
+│   │                         # GalleryPhoto, ContactMessage, OpeningHours
+│   ├── Form/                 # ContactType, OrderType, RegistrationFormType…
+│   ├── Repository/
+│   ├── Security/
+│   │   └── UserAuthenticator.php
+│   └── Service/
+│       └── EmailService.php
+└── templates/
+    ├── base.html.twig        # Template maître (header, footer, SEO)
+    ├── admin/                # Dashboard + CRUD templates
+    ├── email/                # 5 templates d'email
+    ├── main/                 # index, contact, recrutement
+    ├── order/                # index, panier, checkout, confirmation
+    ├── security/             # login
+    └── user/                 # dashboard, orders, order_show, profile
 ```
 
 ---
 
-## Entités Doctrine
+## Entités & Relations
 
-### User (Utilisateur/Client)
+```
+User (1) ──────────► (N) Order
+Category (1) ──────► (N) Dish
+Order (1) ──────────► (N) OrderItem
+OrderItem (N) ──────► (1) Dish
+```
 
-| Champ     | Type     | Description                 |
-| --------- | -------- | --------------------------- |
-| id        | int      | Identifiant unique          |
-| email     | string   | Email de connexion (unique) |
-| password  | string   | Mot de passe hashé (bcrypt) |
-| roles     | json     | Rôles utilisateur           |
-| firstName | string   | Prénom                      |
-| lastName  | string   | Nom                         |
-| phone     | string   | Téléphone                   |
-| address   | string   | Adresse                     |
-| createdAt | datetime | Date de création            |
-| updatedAt | datetime | Date de modification        |
+| Entité           | Champs principaux                                                                                  |
+|------------------|----------------------------------------------------------------------------------------------------|
+| `User`           | email, password (bcrypt), firstName, roles (JSON), createdAt                                       |
+| `Category`       | name, slug (unique), description, displayOrder, isActive                                           |
+| `Dish`           | name, description, price (decimal), image, displayOrder, isActive, isFeatured, category            |
+| `Order`          | status, type (pickup/delivery), customerName, customerPhone, customerEmail, totalAmount            |
+| `OrderItem`      | dish, dishName, unitPrice, quantity, specialInstructions                                           |
+| `GalleryPhoto`   | filename, altText, displayOrder, isActive, createdAt                                               |
+| `ContactMessage` | firstName, lastName, email, phone, subject, message, isRead, createdAt                             |
+| `OpeningHours`   | dayName, dayOfWeek (0–6), morningOpen/Close, afternoonOpen/Close, isClosed                        |
 
-### Category (Catégorie de plats)
-
-| Champ        | Type      | Description         |
-| ------------ | --------- | ------------------- |
-| id           | int       | Identifiant unique  |
-| name         | string    | Nom de la catégorie |
-| slug         | string    | Slug URL (unique)   |
-| description  | text      | Description         |
-| displayOrder | int       | Ordre d'affichage   |
-| isActive     | bool      | Actif/Inactif       |
-| dishes       | OneToMany | Relation vers Dish  |
-
-### Dish (Plat/Menu)
-
-| Champ        | Type      | Description            |
-| ------------ | --------- | ---------------------- |
-| id           | int       | Identifiant unique     |
-| name         | string    | Nom du plat            |
-| description  | text      | Description            |
-| price        | decimal   | Prix                   |
-| image        | string    | Image (optionnel)      |
-| displayOrder | int       | Ordre d'affichage      |
-| isActive     | bool      | Actif/Inactif          |
-| isFeatured   | bool      | En vedette             |
-| category     | ManyToOne | Relation vers Category |
-| createdAt    | datetime  | Date de création       |
-| updatedAt    | datetime  | Date de modification   |
-
-### Order (Commande)
-
-| Champ        | Type      | Description              |
-| ------------ | --------- | ------------------------ |
-| id           | int       | Identifiant unique       |
-| orderNumber  | string    | Numéro de commande       |
-| user         | ManyToOne | Relation vers User       |
-| type        | string    | Type: delivery/takeaway |
-| status      | string    | Statut: pending/confirmed/preparing/ready/completed/cancelled |
-| totalAmount  | decimal   | Montant total            |
-| deliveryAddress | string | Adresse de livraison    |
-| notes        | text      | Notes spéciales          |
-| createdAt    | datetime  | Date de création         |
-| updatedAt    | datetime  | Date de modification     |
-
-### OrderItem (Article de commande)
-
-| Champ      | Type      | Description           |
-| ---------- | --------- | --------------------- |
-| id         | int       | Identifiant unique    |
-| order      | ManyToOne | Relation vers Order   |
-| dish       | ManyToOne | Relation vers Dish    |
-| quantity   | int       | Quantité               |
-| unitPrice  | decimal   | Prix unitaire          |
-| subtotal   | decimal   | Sous-total             |
-
-### GalleryPhoto (Photo galerie)
-
-| Champ        | Type     | Description        |
-| ------------ | -------- | ------------------ |
-| id           | int      | Identifiant unique |
-| filename     | string   | Nom du fichier     |
-| altText      | string   | Texte alternatif   |
-| displayOrder | int      | Ordre d'affichage  |
-| isActive     | bool     | Actif/Inactif      |
-| createdAt    | datetime | Date de création   |
-
-### ContactMessage (Message de contact)
-
-| Champ     | Type     | Description           |
-| --------- | -------- | --------------------- |
-| id        | int      | Identifiant unique    |
-| firstName | string   | Prénom                |
-| lastName  | string   | Nom                   |
-| email     | string   | Email                 |
-| phone     | string   | Téléphone (optionnel) |
-| subject   | string   | Sujet                 |
-| message   | text     | Message               |
-| isRead    | bool     | Lu/Non lu             |
-| createdAt | datetime | Date de création      |
-
-### OpeningHours (Horaires d'ouverture)
-
-| Champ          | Type   | Description              |
-| -------------- | ------ | ------------------------ |
-| id             | int    | Identifiant unique       |
-| dayName        | string | Nom du jour              |
-| dayOfWeek      | int    | Jour de la semaine (0-6) |
-| morningOpen    | time   | Ouverture matin          |
-| morningClose   | time   | Fermeture matin          |
-| afternoonOpen  | time   | Ouverture après-midi    |
-| afternoonClose | time   | Fermeture après-midi    |
-| isClosed       | bool   | Fermé                    |
-| displayOrder   | int    | Ordre d'affichage        |
+**Statuts des commandes :** `pending` → `confirmed` → `preparing` → `ready` → `completed` / `cancelled`
 
 ---
 
-## Base de Données
+## Routes
 
-### Schéma des Relations
+### Publiques
 
-```
-User (1) ──────► (N) Order
-Order (1) ──────► (N) OrderItem
-OrderItem (N) ──► (1) Dish
-Category (1) ──► (N) Dish
-Dish (N) ──────► (1) Category
-User (1) ──────► (N) ContactMessage
-```
+| URL                              | Description                      |
+|----------------------------------|----------------------------------|
+| `/`                              | Page d'accueil                   |
+| `/contact`                       | Formulaire de contact            |
+| `/recrutement`                   | Page recrutement                 |
+| `/commande`                      | Carte & commande                 |
+| `/commande/panier`               | Panier                           |
+| `/commande/checkout`             | Validation commande              |
+| `/commande/confirmation/{id}`    | Confirmation                     |
+| `/login`                         | Connexion                        |
+| `/inscription`                   | Inscription                      |
 
-### Commandes Base de Données
+### Espace client (`ROLE_USER`)
 
-```bash
-# Créer la base de données
-php bin/console doctrine:database:create
+| URL                          | Description            |
+|------------------------------|------------------------|
+| `/mon-compte/`               | Tableau de bord        |
+| `/mon-compte/commandes`      | Historique commandes   |
+| `/mon-compte/commandes/{id}` | Détail commande        |
+| `/mon-compte/profil`         | Mon profil             |
 
-# Créer une migration après modification d'entité
-php bin/console make:migration
+### Administration (`ROLE_ADMIN`)
 
-# Exécuter les migrations
-php bin/console doctrine:migrations:migrate
-
-# Charger les fixtures
-php bin/console doctrine:fixtures:load
-
-# Synchroniser le schéma (sans migration)
-php bin/console doctrine:schema:update --force
-```
-
----
-
-## Routes du Site
-
-### Routes Publiques
-
-| Route              | Contrôleur              | Description                    |
-| ------------------ | ---------------------- | ------------------------------ |
-| /                  | MainController         | Page d'accueil                 |
-| /contact           | ContactController      | Formulaire de contact          |
-| /recrutement       | MainController         | Page recrutement               |
-| /gallery           | MainController         | Galerie photos                 |
-| /menu              | OrderController        | Menu avec commande             |
-| /commande          | OrderController        | Page commande (alias menu)     |
-| /commande/panier   | OrderController        | Panier                         |
-| /commande/checkout | OrderController        | Validation commande            |
-| /commande/confirmation/{id} | OrderController | Confirmation commande    |
-| /login             | SecurityController     | Connexion                      |
-| /register          | RegistrationController | Inscription                    |
-
-### Routes Utilisateur (ROLE_USER)
-
-| Route                  | Contrôleur      | Description                |
-| ---------------------- | --------------- | -------------------------- |
-| /profile               | UserController  | Profil utilisateur          |
-| /profile/edit          | UserController  | Modifier profil            |
-| /orders                | UserController  | Historique commandes       |
-| /order/{id}            | UserController  | Détail commande            |
-
-### Routes Administrateur (ROLE_ADMIN)
-
-| Route                      | Contrôleur            | Description              |
-| -------------------------- | --------------------- | ------------------------ |
-| /admin/                    | DashboardController   | Dashboard admin          |
-| /admin/category/           | CategoryController    | Gestion catégories      |
-| /admin/dish/               | DishController        | Gestion plats            |
-| /admin/photo/              | PhotoController       | Gestion galerie          |
-| /admin/message/            | MessageController     | Gestion messages         |
-| /admin/hours/              | HoursController       | Gestion horaires         |
-| /admin/user/               | UserController        | Gestion utilisateurs     |
-
----
-
-## Sécurité
-
-### Configuration
-
-- **Hashage des mots de passe** : Bcrypt
-- **Protection CSRF** : Activée sur tous les formulaires
-- **Sessions** : Natives PHP avec stockage fichiers
-- **Rôles** : ROLE_ADMIN, ROLE_USER
-
-### Accès
-
-| Route            | Rôle requis   |
-| ---------------- | ------------- |
-| /                | PUBLIC_ACCESS |
-| /contact         | PUBLIC_ACCESS |
-| /recrutement     | PUBLIC_ACCESS |
-| /gallery         | PUBLIC_ACCESS |
-| /menu            | PUBLIC_ACCESS |
-| /commande/*      | PUBLIC_ACCESS |
-| /login           | PUBLIC_ACCESS |
-| /register        | PUBLIC_ACCESS |
-| /profile         | ROLE_USER     |
-| /orders          | ROLE_USER     |
-| /admin/*         | ROLE_ADMIN    |
-
-### Validations
-
-Les formulaires utilisent des validations Regex :
-
-- **Nom/Prénom** : `^[a-zA-ZÀ-ÿ\s\-]+$` (lettres, espaces, tirets)
-- **Téléphone** : Format français international
-- **Email** : Validation Symfony intégrée
-- **Longueurs** : Min/Max configurés par champ
+| URL                  | Description                     |
+|----------------------|---------------------------------|
+| `/admin/`            | Dashboard (stats + messages)    |
+| `/admin/category/`   | CRUD Catégories                 |
+| `/admin/dish/`       | CRUD Plats                      |
+| `/admin/photo/`      | CRUD Galerie                    |
+| `/admin/message/`    | Consultation messages contact   |
+| `/admin/hours/`      | CRUD Horaires                   |
+| `/admin/user/`       | Gestion utilisateurs            |
 
 ---
 
 ## Fonctionnalités
 
-### Système de Commande
+### Système de commande
+- Panier en session (`order_cart`)
+- Deux modes : Click & Collect / Livraison à domicile
+- Suivi de statut : `pending` → `completed`
+- Instructions spéciales par article
+- Emails automatiques (confirmation client + alerte admin)
 
-1. **Menu interactif** - Sélection de plats par catégorie
-2. **Panier** - Ajout/retrait d'articles avec calcul automatique
-3. **Checkout** - Formulaire de livraison/à emporter
-4. **Confirmation** - Email de confirmation client + notification admin
-5. **Suivi** - Historique des commandes utilisateur
+### Galerie photo
+- 19 images WebP (`galerie-11` à `galerie-29`)
+- Navigation par vignettes, flèches, clavier (**← →**)
+- Swipe tactile (mobile)
+- Auto-défilement toutes les 5 secondes
+- Lightbox plein écran avec prev/next et compteur "X / 19"
 
-### Dashboard Administrateur
+### Authentification
+- Inscription avec mot de passe fort (min. 8 car., maj., chiffre, spécial)
+- Connexion par email (bcrypt)
+- Rôles : `ROLE_USER`, `ROLE_ADMIN`
+- Protection CSRF sur tous les formulaires
 
-1. **Dashboard** - Statistiques et messages récents
-2. **Catégories** - CRUD complet
-3. **Plats** - CRUD complet avec gestion images
-4. **Galerie** - CRUD photos
-5. **Messages** - Consultation et suppression
-6. **Horaire** - CRUD horaires d'ouverture
+### SEO & Référencement
+- `<meta name="description">` surchargeable par page via `{% block meta_description %}`
+- **Open Graph** : `og:title`, `og:description`, `og:image`, `og:url`, `og:locale`
+- **Twitter Card** : `summary_large_image`
+- **URL canonique** automatique
+- **JSON-LD** `Restaurant` (Schema.org) : adresse, horaires, réseaux sociaux, menu
 
-### Identifiants par défaut
+### Emails (via `EmailService`)
 
-```
-Email : admin@theklassiker.fr
-Mot de passe : Klassiker2025!
-```
-
-**⚠️ À changer immédiatement après la première connexion !**
-
----
-
-## Installation
-
-### Prérequis
-
-- PHP 8.2+
-- Composer
-- MySQL 8
-- Node.js (pour les assets)
-
-### Étapes
-
-1. **Cloner le projet**
-
-```bash
-git clone https://github.com/karlvinfdl/the-klassiker.git the-klassiker
-cd the-klassiker
-```
-
-2. **Installer les dépendances**
-
-```bash
-composer install
-npm install
-```
-
-3. **Configurer les variables d'environnement**
-
-Créer un fichier `.env.local` :
-
-```env
-DATABASE_URL="mysql://user:password@127.0.0.1:3306/restaurant?serverVersion=8.0"
-MAILER_DSN="smtp://user:password@smtp.example.com:587"
-APP_SECRET="votre-secret-tres-long-et-aleatoire"
-```
-
-4. **Créer la base de données**
-
-```bash
-php bin/console doctrine:database:create
-php bin/console doctrine:migrations:migrate
-php bin/console doctrine:fixtures:load
-```
-
-5. **Compiler les assets**
-
-```bash
-npm run build
-```
-
-6. **Démarrer le serveur**
-
-```bash
-php bin/console server:run
-```
+| Déclencheur           | Destinataire | Template                              |
+|-----------------------|--------------|---------------------------------------|
+| Contact soumis        | Client       | `contact_confirmation.html.twig`      |
+| Contact soumis        | Admin        | `admin_notification.html.twig`        |
+| Commande passée       | Client       | `order_confirmation.html.twig`        |
+| Commande passée       | Admin        | `new_order_admin.html.twig`           |
+| Inscription           | Nouveau user | `registration_confirmation.html.twig` |
 
 ---
 
-## Déploiement o2switch
+## Sécurité
 
-### Configuration Production
-
-1. **Fichier .env.prod**
-
-```env
-APP_ENV=prod
-APP_DEBUG=0
-DATABASE_URL="mysql://user:password@localhost:3306/restaurant"
-MAILER_DSN="smtp://..."
-APP_SECRET="secret-production"
-```
-
-2. **Permissions**
-
-```bash
-chmod -R 755 var/
-chmod -R 755 public/
-```
-
-3. **Dossier public comme racine**
-
-Configurer le chemin `/` vers `public/` dans le panel o2switch.
-
-4. **Configuration .htaccess**
-
-Le fichier `public/.htaccess` est déjà configuré pour Symfony.
-
----
-
-## Guide d'Utilisation
-
-### Pour les Clients
-
-1. Créer un compte ou commander en tant qu'invité
-2. Parcourir le menu et ajouter des plats au panier
-3. Valider le panier et choisir : livraison ou à emporter
-4. Confirmer la commande
-5. Recevoir un email de confirmation
-6. Suivre l'état de la commande dans l'espace client
-
-### Pour l'Administration
-
-1. Se connecter sur `/login`
-2. Accéder au dashboard `/admin/`
-3. Gérer les catégories, plats, photos, messages, horaires
-4. Suivre les nouvelles commandes
-5. Mettre à jour le statut des commandes
-
-### Modification du Menu
-
-1. Aller dans `/admin/category/` pour créer des catégories
-2. Aller dans `/admin/dish/` pour ajouter des plats
-3. Les plats s'afficheront automatiquement sur la page de commande
-
-### Gestion des Images
-
-- Les images de plats vont dans `public/uploads/`
-- Les images du site sont dans `assets/images/`
+| Mécanisme              | Configuration                                               |
+|------------------------|-------------------------------------------------------------|
+| Hachage mot de passe   | bcrypt (Symfony Password Hasher)                           |
+| Authentification       | Passport-based (UserAuthenticator custom)                  |
+| Protection CSRF        | Activée sur tous les formulaires Symfony                   |
+| Routes admin           | `access_control` → `ROLE_ADMIN` requis                     |
+| Liens externes         | `rel="noopener noreferrer"` systématique                   |
+| Validation téléphone   | Regex française : `^(?:(?:\+\|00)33\|0)\s*[1-9]…`         |
 
 ---
 
 ## Commandes Utiles
 
 ```bash
-# Développement
-php bin/console server:run          # Serveur dev
-npm run watch                       # Watch CSS/JS
-
-# Base de données
-php bin/console doctrine:schema:update --force  # Synchroniser schéma
+# Assets
+npm run watch                                   # Watch (dev)
+npm run build                                   # Build production
 
 # Cache
-php bin/console cache:clear        # Vider le cache
-php bin/console cache:warmup       # Préchauffer le cache
+php bin/console cache:clear
+php bin/console cache:warmup
+
+# Base de données
+php bin/console doctrine:migrations:migrate
+php bin/console doctrine:fixtures:load
+php bin/console doctrine:schema:validate
+
+# Debug
+php bin/console debug:router
+php bin/console debug:container
 
 # Utilitaires
-php bin/console debug:router       # Liste des routes
-php bin/console debug:container     # Liste des services
-
-# Créer un utilisateur admin
-php bin/console app:create-admin-user
+php bin/console app:create-admin                # Créer un admin
 ```
 
 ---
 
-## Support
+## Déploiement (o2switch)
 
-Pour toute question ou problème :
+```bash
+# 1. Variables d'environnement
+APP_ENV=prod
+APP_DEBUG=0
 
-- Email : the.klassiker@gmail.com
-- Consulter la documentation Symfony : https://symfony.com/doc/
+# 2. Installer sans dépendances dev
+composer install --no-dev --optimize-autoloader
+
+# 3. Build assets
+npm run build
+
+# 4. Migrer
+php bin/console doctrine:migrations:migrate --no-interaction
+
+# 5. Chaud du cache
+php bin/console cache:warmup
+
+# 6. Permissions
+chmod -R 755 var/ public/
+```
+
+Pointer le virtualhost vers le dossier `public/`.
+Le fichier `public/.htaccess` est déjà configuré pour Symfony.
+
+---
+
+## Données de Démonstration (Fixtures)
+
+- 1 admin : `admin@theklassiker.fr` / `Klassiker2025!`
+- 8 catégories : Smash Burgers, Chicken, Kebabs Berlinois, Box et Assiettes, Salades, Sides, Desserts, Boissons
+- Plusieurs plats par catégorie avec prix et descriptions
+- Horaires : Lun–Jeu 11h–23h · Ven–Dim 11h–00h
+- 19 photos de galerie
+
+---
+
+## Améliorations (mars 2026)
+
+- **SEO** : Open Graph, Twitter Card, JSON-LD, canonical URL, meta description par page
+- **Galerie** : bug d'index corrigé, navigation clavier ← →, swipe mobile, compteur, lightbox prev/next
+- **Style** : section-kicker et section-subtitle lisibles sur fond beige, image galerie agrandie (460px), flèches avec hover jaune, vignettes avec opacité, hover réseaux sociaux
+- **Accessibilité** : `role="dialog"`, `aria-modal`, `aria-label`, `rel="noopener noreferrer"`
 
 ---
 
 ## Licence
 
-Propriétaire - The Klassiker © 2025
-
+Propriétaire — The Klassiker © 2026

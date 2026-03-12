@@ -1,0 +1,566 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ dish.name }} - The Klassiker{% endblock %}
+{% block meta_description %}{{ dish.description|striptags|slice(0, 160) }} - Commander sur The Klassiker{% endblock %}
+
+{% block body %}
+  <!-- ================= HERO ================= -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <nav class="breadcrumb-nav" aria-label="Fil d'Ariane">
+        <a href="{{ path('app_home') }}">Accueil</a>
+        <span class="breadcrumb-sep">/</span>
+        <a href="{{ path('app_order') }}">Commander</a>
+        {% if dish.category %}
+          <span class="breadcrumb-sep">/</span>
+          <a href="{{ path('app_order') }}#category-{{ dish.category.slug }}">{{ dish.category.name }}</a>
+        {% endif %}
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">{{ dish.name }}</span>
+      </nav>
+      <h1>{{ dish.name }}</h1>
+      {% if dish.category %}
+        <p class="hero-badge">{{ dish.category.name }}</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ================= DÉTAIL PRODUIT ================= -->
+  <section class="section section-beige">
+    <div class="product-detail-container">
+      
+      <!-- Image du produit -->
+      <div class="product-image-wrapper" data-animate="fade-up">
+        <div class="product-image-frame">
+          {% if dish.image %}
+            {% set localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'] %}
+            {% if dish.image in localDishImages %}
+              <img src="{{ asset('build/images/' ~ dish.image) }}" alt="{{ dish.name }}">
+            {% else %}
+              <img src="{{ asset('uploads/' ~ dish.image) }}" alt="{{ dish.name }}">
+            {% endif %}
+          {% else %}
+            <img src="{{ asset('build/images/1-.webp') }}" alt="{{ dish.name }}">
+          {% endif %}
+          
+          {% if dish.isFeatured %}
+            <span class="product-featured-badge">⭐ Vedette</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Infos produit -->
+      <div class="product-info-wrapper" data-animate="fade-up" data-animate-delay="100">
+        <div class="product-card">
+          <div class="product-header">
+            {% if dish.category %}
+              <a href="{{ path('app_order') }}#category-{{ dish.category.slug }}" class="product-category-tag">{{ dish.category.name }}</a>
+            {% endif %}
+            <h2 class="product-title">{{ dish.name }}</h2>
+          </div>
+          
+          <p class="product-description">{{ dish.description }}</p>
+
+          <div class="product-price-display">
+            <span class="price-label">Prix</span>
+            <span class="price-value">{{ dish.price|number_format(2, ',', ' ') }} €</span>
+          </div>
+
+          <!-- Formulaire d'ajout au panier -->
+          <form action="{{ path('app_order_add') }}" method="POST" class="add-to-cart-form">
+            <div class="form-row">
+              <div class="qty-wrapper">
+                <label class="form-label">Quantité</label>
+                <div class="qty-controls">
+                  <button type="button" class="qty-btn" id="qtyMinus" aria-label="Diminuer">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" readonly>
+                  <button type="button" class="qty-btn" id="qtyPlus" aria-label="Augmenter">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="special_instructions" class="form-label">Instructions spéciales</label>
+              <textarea id="special_instructions" name="special_instructions" rows="2" class="form-control" placeholder="Ex: sans oignons, sauce à part..."></textarea>
+            </div>
+
+            <input type="hidden" name="dish_id" value="{{ dish.id }}">
+
+            <button type="submit" class="btn btn-primary btn-full">
+              <i class="fas fa-shopping-basket"></i>
+              Ajouter au panier
+            </button>
+          </form>
+
+          <div class="product-actions-row">
+            <a href="{{ path('app_order') }}" class="btn btn-ghost">
+              <i class="fas fa-arrow-left"></i>
+              Retour au menu
+            </a>
+            <a href="{{ path('app_order_cart') }}" class="btn btn-outline">
+              <i class="fas fa-shopping-cart"></i>
+              Voir le panier
+            </a>
+          </div>
+
+          <!-- Meta infos -->
+          <div class="product-meta-list">
+            <div class="meta-row">
+              <i class="fas fa-clock"></i>
+              <span>Préparation rapide</span>
+            </div>
+            <div class="meta-row">
+              <i class="fas fa-leaf"></i>
+              <span>Produits frais</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PRODUITS SIMILAIRES ================= -->
+  {% if dish.category and dish.category.dishes|length > 1 %}
+    <section class="section section-dark">
+      <div class="section-header" data-animate="fade-up">
+        <p class="section-kicker">Vous aimerez aussi</p>
+        <h2>Autres {{ dish.category.name }}</h2>
+      </div>
+
+      <div class="similar-products-scroll">
+        {% for similarDish in dish.category.dishes %}
+          {% if similarDish.id != dish.id %}
+            <a href="{{ path('app_product_show', {id: similarDish.id}) }}" class="food-card-link">
+              <article class="food-card">
+                {% if similarDish.image %}
+                  {% set localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'] %}
+                  {% if similarDish.image in localDishImages %}
+                    <img src="{{ asset('build/images/' ~ similarDish.image) }}" alt="{{ similarDish.name }}">
+                  {% else %}
+                    <img src="{{ asset('uploads/' ~ similarDish.image) }}" alt="{{ similarDish.name }}">
+                  {% endif %}
+                {% else %}
+                  <img src="{{ asset('build/images/1-.webp') }}" alt="{{ similarDish.name }}">
+                {% endif %}
+                <div class="food-body">
+                  <h3>{{ similarDish.name }}</h3>
+                  <p>{{ similarDish.description|slice(0, 60) }}{% if similarDish.description|length > 60 %}...{% endif %}</p>
+                  <div class="food-footer">
+                    <span class="food-tag">{{ dish.category.name }}</span>
+                    <span class="food-price">{{ similarDish.price|number_format(2, ',', ' ') }} €</span>
+                  </div>
+                </div>
+              </article>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <!-- ================= CTA COMMANDE ================= -->
+  <section class="section section-red">
+    <div class="cta-content" data-animate="fade-up">
+      <h2>Prêt à commander ?</h2>
+      <p class="section-subtitle">Faites-vous livrer ou venez retirer votre commande sur place.</p>
+      <div class="cta-buttons">
+        <a href="{{ path('app_order') }}" class="btn btn-primary btn-lg">
+          Voir la carte
+        </a>
+        <a href="{{ path('app_order_cart') }}" class="btn btn-ghost btn-lg">
+          Voir mon panier
+        </a>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    /* Breadcrumb */
+    .breadcrumb-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-size: 0.82rem;
+      margin-bottom: 16px;
+    }
+
+    .breadcrumb-nav a {
+      color: var(--color-yellow);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .breadcrumb-nav a:hover {
+      opacity: 0.8;
+    }
+
+    .breadcrumb-sep {
+      opacity: 0.5;
+    }
+
+    .breadcrumb-current {
+      opacity: 0.7;
+    }
+
+    /* Product Detail Container */
+    .product-detail-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* Product Image */
+    .product-image-frame {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: linear-gradient(135deg, #ffcf70 0%, #9a1515 55%, #25060a 100%);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .product-image-frame img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .product-featured-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      background: var(--color-yellow);
+      color: #0b1b32;
+      font-size: 0.8rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* Product Card */
+    .product-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-light);
+    }
+
+    .product-header {
+      margin-bottom: 16px;
+    }
+
+    .product-category-tag {
+      display: inline-block;
+      background: rgba(11, 27, 50, 0.08);
+      color: #0b1b32;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .product-category-tag:hover {
+      background: #0b1b32;
+      color: var(--color-yellow);
+    }
+
+    .product-title {
+      font-size: 1.8rem;
+      color: #0b1b32;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+    }
+
+    .product-description {
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .product-price-display {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      margin-bottom: 20px;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+
+    .price-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #666;
+    }
+
+    .price-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #9a1515;
+    }
+
+    /* Form */
+    .add-to-cart-form {
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      margin-bottom: 16px;
+    }
+
+    .qty-wrapper .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: #0b1b32;
+    }
+
+    .qty-controls {
+      display: inline-flex;
+      border: 2px solid #0b1b32;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .qty-btn {
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: #0b1b32;
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    .qty-btn:hover {
+      background: var(--color-yellow);
+      color: #0b1b32;
+    }
+
+    .qty-controls input {
+      width: 56px;
+      height: 44px;
+      border: none;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0b1b32;
+      background: transparent;
+    }
+
+    .qty-controls input:focus {
+      outline: none;
+    }
+
+    .add-to-cart-form .form-group {
+      margin-bottom: 16px;
+    }
+
+    .add-to-cart-form .form-label {
+      color: #0b1b32;
+      margin-bottom: 6px;
+    }
+
+    .add-to-cart-form textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+      padding: 14px 24px;
+    }
+
+    /* Product Actions */
+    .product-actions-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .product-actions-row .btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    /* Meta */
+    .product-meta-list {
+      display: flex;
+      gap: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .meta-row i {
+      color: var(--color-yellow);
+    }
+
+    /* Similar Products - Horizontal Scroll */
+    .similar-products-scroll {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 10px 0 20px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.2) transparent;
+    }
+
+    .similar-products-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .similar-products-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .similar-products-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
+    }
+
+    .similar-products-scroll .food-card-link {
+      flex: 0 0 260px;
+    }
+
+    .similar-products-scroll .food-card img {
+      height: 160px;
+    }
+
+    /* CTA Section */
+    .section-red {
+      background: linear-gradient(135deg, #9a1515 0%, #0b1b32 100%);
+    }
+
+    .cta-content {
+      text-align: center;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .cta-content h2 {
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .cta-content .section-subtitle {
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 24px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .product-detail-container {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .product-image-frame img {
+        height: 320px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .product-card {
+        padding: 20px;
+      }
+
+      .product-title {
+        font-size: 1.4rem;
+      }
+
+      .price-value {
+        font-size: 1.6rem;
+      }
+
+      .product-actions-row {
+        flex-direction: column;
+      }
+
+      .product-meta-list {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .similar-products-scroll .food-card-link {
+        flex: 0 0 220px;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .cta-buttons .btn {
+        width: 100%;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const qtyInput = document.getElementById('quantity');
+      const qtyMinus = document.getElementById('qtyMinus');
+      const qtyPlus = document.getElementById('qtyPlus');
+
+      if (qtyInput && qtyMinus && qtyPlus) {
+        qtyMinus.addEventListener('click', function() {
+          let current = parseInt(qtyInput.value);
+          if (current > 1) {
+            qtyInput.value = current - 1;
+          }
+        });
+
+        qtyPlus.addEventListener('click', function() {
+          let current = parseInt(qtyInput.value);
+          if (current < 10) {
+            qtyInput.value = current + 1;
+          }
+        });
+      }
+    });
+  </script>
+{% endblock %}
+

@@ -7,7 +7,7 @@
   <section class="page-hero">
     <div class="page-hero-inner">
       <p class="hero-badge">Commande</p>
-      <h1>Mon<span>panier</span></h1>
+      <h1>Mon <span>panier</span></h1>
     </div>
   </section>
 
@@ -105,10 +105,12 @@
   {{ parent() }}
   <style>
     .cart-container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
       display: grid;
       gap: 30px;
+      grid-template-columns: 1fr 300px;
+      align-items: start;
     }
 
     .cart-items {
@@ -260,6 +262,7 @@
       background: #fff;
       border-radius: 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      grid-column: 1 / -1;
     }
 
     .cart-empty-icon {
@@ -312,21 +315,25 @@
     }
 
     @media (max-width: 768px) {
+      .cart-container {
+        grid-template-columns: 1fr;
+      }
+
       .cart-item {
         flex-direction: column;
         align-items: flex-start;
       }
-      
+
       .cart-item-actions,
       .cart-item-subtotal {
         width: 100%;
         justify-content: flex-start;
       }
-      
+
       .cart-item-subtotal {
         margin-top: 8px;
       }
-      
+
       .order-options {
         grid-template-columns: 1fr;
       }

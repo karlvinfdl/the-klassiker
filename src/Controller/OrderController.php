@@ -49,6 +49,23 @@ class OrderController extends AbstractController
   }
 
   /**
+   * Page détail d'un produit (dépréciée - maintenant en modal)
+   * Gardée pour compatibilité si JS désactivé
+   */
+  #[Route('/produit/{id}', name: 'app_product_show', requirements: ['id' => '\d+'])]
+  public function show(int $id): Response
+  {
+    $dish = $this->em->getRepository(Dish::class)->find($id);
+
+    if (!$dish) {
+      throw $this->createNotFoundException('Produit non trouvé');
+    }
+
+    // Rediriger vers la page de commande avec le produit en paramètre
+    return $this->redirectToRoute('app_order', ['_fragment' => 'menu']);
+  }
+
+  /**
    * Ajouter un article au panier
    */
   #[Route('/commande/ajouter', name: 'app_order_add', methods: ['POST'])]
