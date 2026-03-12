@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Dish;
 use App\Entity\Order;
+use App\Entity\Supplement;
 use App\Entity\OrderItem;
 use App\Form\OrderType;
 use App\Service\EmailService;
@@ -41,10 +42,21 @@ class OrderController extends AbstractController
     $cart = $this->getCart();
     $cartCount = $this->getCartCount();
 
+    $supplements = $this->em->getRepository(Supplement::class)->findBy(
+      ['isActive' => true],
+      ['displayOrder' => 'ASC']
+    );
+
+    $drinks = $this->em->getRepository(Category::class)->findOneBy(['slug' => 'boissons']);
+    $desserts = $this->em->getRepository(Category::class)->findOneBy(['slug' => 'desserts']);
+
     return $this->render('order/index.html.twig', [
       'categories' => $categories,
       'cart' => $cart,
       'cartCount' => $cartCount,
+      'supplements' => $supplements,
+      'drinksDishes' => $drinks ? $drinks->getDishes()->toArray() : [],
+      'dessertsDishes' => $desserts ? $desserts->getDishes()->toArray() : [],
     ]);
   }
 

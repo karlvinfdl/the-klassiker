@@ -1,0 +1,17 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Modifier le message - Admin{% endblock %}
+{% block page_title %}Modifier le message{% endblock %}
+
+{% block body %}
+<div class="table-card">
+  <h2>Modifier le message</h2>
+  {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-primary mt-3">Enregistrer</button>
+  {{ form_end(form) }}
+  <div class="mt-3">
+    <a href="{{ path('admin_marquee_index') }}" class="btn btn-outline-secondary">Retour</a>
+  </div>
+</div>
+{% endblock %}

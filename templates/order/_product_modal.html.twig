@@ -1,0 +1,39 @@
+{# =========================================================
+   Modal produit réutilisable — inclure avec :
+   {% include 'order/_product_modal.html.twig' %}
+   Les variables supplements, drinksDishes, dessertsDishes
+   doivent être passées par le controller.
+   ========================================================= #}
+
+{% set localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'] %}
+
+{# Données JSON embarquées pour le JS #}
+<script id="modal-data" type="application/json">
+{
+  "supplements": [
+    {% for s in supplements %}
+    {"id": {{ s.id }}, "name": {{ s.name|json_encode|raw }}, "price": {{ s.price }}}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ],
+  "drinks": [
+    {% for d in drinksDishes %}
+    {"id": {{ d.id }}, "name": {{ d.name|json_encode|raw }}, "price": {{ d.price }},
+     "image": {{ d.image ? (d.image in localDishImages ? asset('build/images/' ~ d.image) : asset('uploads/' ~ d.image))|json_encode|raw : 'null' }}}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ],
+  "desserts": [
+    {% for d in dessertsDishes %}
+    {"id": {{ d.id }}, "name": {{ d.name|json_encode|raw }}, "price": {{ d.price }},
+     "image": {{ d.image ? (d.image in localDishImages ? asset('build/images/' ~ d.image) : asset('uploads/' ~ d.image))|json_encode|raw : 'null' }}}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+
+<div class="product-modal" id="productModal" aria-hidden="true" data-fallback="{{ asset('build/images/1-.webp') }}">
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal-content">
+    <button class="modal-close" id="modalClose" aria-label="Fermer">&times;</button>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>

@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Dish;
 use App\Entity\GalleryPhoto;
+use App\Entity\MarqueeItem;
 use App\Entity\OpeningHours;
+use App\Entity\Supplement;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,11 +43,28 @@ class MainController extends AbstractController
       ['displayOrder' => 'ASC']
     );
 
+    $marqueeItems = $em->getRepository(MarqueeItem::class)->findBy(
+      ['isActive' => true],
+      ['displayOrder' => 'ASC']
+    );
+
+    $supplements = $em->getRepository(Supplement::class)->findBy(
+      ['isActive' => true],
+      ['displayOrder' => 'ASC']
+    );
+
+    $drinks = $em->getRepository(Category::class)->findOneBy(['slug' => 'boissons']);
+    $desserts = $em->getRepository(Category::class)->findOneBy(['slug' => 'desserts']);
+
     return $this->render('main/index.html.twig', [
       'categories' => $categories,
       'featuredDishes' => $featuredDishes,
       'galleryPhotos' => $galleryPhotos,
       'openingHours' => $openingHours,
+      'marqueeItems' => $marqueeItems,
+      'supplements' => $supplements,
+      'drinksDishes' => $drinks ? $drinks->getDishes()->toArray() : [],
+      'dessertsDishes' => $desserts ? $desserts->getDishes()->toArray() : [],
     ]);
   }
 

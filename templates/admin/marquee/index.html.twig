@@ -1,0 +1,58 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Bandeau défilant - Admin{% endblock %}
+{% block page_title %}Bandeau défilant{% endblock %}
+
+{% block body %}
+<div class="table-card">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Messages du bandeau</h2>
+    <a href="{{ path('admin_marquee_new') }}" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Ajouter un message
+    </a>
+  </div>
+
+  <p class="text-muted">Ces messages défilent automatiquement sur la page d'accueil. Vous pouvez les activer/désactiver ou en ajouter pour vos promotions.</p>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Ordre</th>
+        <th>Texte</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.displayOrder }}</td>
+        <td>{{ item.text }}</td>
+        <td>
+          {% if item.isActive %}
+            <span class="badge-active">Actif</span>
+          {% else %}
+            <span class="badge-inactive">Inactif</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ path('admin_marquee_edit', {id: item.id}) }}" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-edit"></i>
+          </a>
+          <form method="post" action="{{ path('admin_marquee_delete', {id: item.id}) }}" style="display: inline;">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ item.id) }}">
+            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce message ?')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4" class="text-center">Aucun message. Ajoutez-en un !</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

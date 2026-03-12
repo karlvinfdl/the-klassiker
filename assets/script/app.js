@@ -1,49 +1,26 @@
 // Import du CSS
 import "../styles/app.css";
 
-// Import des images pour Webpack
-import img1 from "../images/galerie-11.webp";
-import img2 from "../images/galerie-12.webp";
-import img3 from "../images/galerie-13.webp";
-import img4 from "../images/galerie-14.webp";
-import img5 from "../images/galerie-15.webp";
-import img6 from "../images/galerie-16.webp";
-import img7 from "../images/galerie-17.webp";
-import img8 from "../images/galerie-18.webp";
-import img9 from "../images/galerie-19.webp";
-import img10 from "../images/galerie-20.webp";
-import img11 from "../images/galerie-21.webp";
-import img12 from "../images/galerie-22.webp";
-import img13 from "../images/galerie-23.webp";
-import img14 from "../images/galerie-24.webp";
-import img15 from "../images/galerie-25.webp";
-import img16 from "../images/galerie-26.webp";
-import img17 from "../images/galerie-27.webp";
-import img18 from "../images/galerie-28.webp";
-import img19 from "../images/galerie-29.webp";
-
-// Tableau d'images utilisé par la galerie
-const galleryImages = [
-  img1,
-  img2,
-  img3,
-  img4,
-  img5,
-  img6,
-  img7,
-  img8,
-  img9,
-  img10,
-  img11,
-  img12,
-  img13,
-  img14,
-  img15,
-  img16,
-  img17,
-  img18,
-  img19,
-];
+// Import des images pour Webpack (assure leur présence dans public/build/images/)
+import "../images/galerie-11.webp";
+import "../images/galerie-12.webp";
+import "../images/galerie-13.webp";
+import "../images/galerie-14.webp";
+import "../images/galerie-15.webp";
+import "../images/galerie-16.webp";
+import "../images/galerie-17.webp";
+import "../images/galerie-18.webp";
+import "../images/galerie-19.webp";
+import "../images/galerie-20.webp";
+import "../images/galerie-21.webp";
+import "../images/galerie-22.webp";
+import "../images/galerie-23.webp";
+import "../images/galerie-24.webp";
+import "../images/galerie-25.webp";
+import "../images/galerie-26.webp";
+import "../images/galerie-27.webp";
+import "../images/galerie-28.webp";
+import "../images/galerie-29.webp";
 
 // ================== SCRIPT PRINCIPAL ==================
 
@@ -137,6 +114,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const lightboxNext = document.getElementById("lightboxNext");
   const lightboxCounter = document.getElementById("lightboxCounter");
 
+  // Tableau d'images construit dynamiquement depuis le DOM
+  const galleryImages = Array.from(thumbs).map((t) => t.dataset.img).filter(Boolean);
   const total = galleryImages.length;
   let currentIndex = 0;
   const SLIDE_DELAY = 5000;

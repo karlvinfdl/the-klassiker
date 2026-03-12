@@ -46,18 +46,18 @@
                        data-dish-description="{{ dish.description }}"
                        data-dish-price="{{ dish.price|number_format(2, ',', ' ') }}"
                        data-dish-category="{{ category.name }}"
-                       data-dish-image="{{ dish.image }}">
+                       {% set localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'] %}
+                       data-dish-image="{{ dish.image ? (dish.image in localDishImages ? asset('build/images/' ~ dish.image) : asset('uploads/' ~ dish.image)) : '' }}">
                     <article class="order-item">
                       <div class="order-item-img">
                         {% if dish.image %}
-                          {% set localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'] %}
                           {% if dish.image in localDishImages %}
                             <img src="{{ asset('build/images/' ~ dish.image) }}" alt="{{ dish.name }}">
                           {% else %}
                             <img src="{{ asset('uploads/' ~ dish.image) }}" alt="{{ dish.name }}">
                           {% endif %}
                         {% else %}
-                          <img src="{{ asset('build/images/' ~ (loop.index % 12 + 1) ~ '-.webp') }}" alt="{{ dish.name }}">
+                          <img src="{{ asset('build/images/1-.webp') }}" alt="{{ dish.name }}">
                         {% endif %}
                       </div>
                       <div class="order-item-body">
@@ -117,12 +117,7 @@
   </section>
 
   <!-- ================= MODAL PRODUIT ================= -->
-  <div class="product-modal" id="productModal" aria-hidden="true">
-    <div class="modal-backdrop" id="modalBackdrop"></div>
-    <div class="modal-content">
-      <button class="modal-close" id="modalClose" aria-label="Fermer">&times;</button>
-      <div class="modal-body" id="modalBody"></div>
-  </div>
+  {% include 'order/_product_modal.html.twig' %}
 {% endblock %}
 
 {% block stylesheets %}
@@ -215,7 +210,7 @@
     }
 
     .order-item {
-      background: #fff;
+      background: #fdf7ee;
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -327,347 +322,10 @@
       }
     }
 
-    /* ========== MODAL ========== */
-    .product-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .product-modal.is-open {
-      display: flex;
-    }
-
-    .modal-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(4px);
-    }
-
-    .modal-content {
-      position: relative;
-      background: #fff;
-      border-radius: var(--radius-lg);
-      max-width: 700px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      animation: modalSlideIn 0.3s ease;
-    }
-
-    @keyframes modalSlideIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 36px;
-      height: 36px;
-      border: none;
-      background: rgba(0, 0, 0, 0.5);
-      color: #fff;
-      border-radius: 50%;
-      font-size: 1.4rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-    }
-
-    .modal-close:hover {
-      background: #9a1515;
-    }
-
-    .modal-product-detail {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .modal-product-image {
-      background: linear-gradient(135deg, #ffcf70 0%, #9a1515 55%, #25060a 100%);
-    }
-
-    .modal-product-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      min-height: 300px;
-    }
-
-    .modal-product-info {
-      padding: 24px;
-    }
-
-    .modal-product-category {
-      display: inline-block;
-      background: rgba(11, 27, 50, 0.08);
-      color: #0b1b32;
-      padding: 4px 12px;
-      border-radius: var(--radius-pill);
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 10px;
-    }
-
-    .modal-product-title {
-      font-size: 1.5rem;
-      color: #0b1b32;
-      margin: 0 0 12px;
-      text-transform: uppercase;
-    }
-
-    .modal-product-desc {
-      color: #555;
-      line-height: 1.6;
-      margin-bottom: 16px;
-      font-size: 0.9rem;
-    }
-
-    .modal-product-price {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #9a1515;
-      margin-bottom: 20px;
-    }
-
-    .modal-product-form .form-group {
-      margin-bottom: 14px;
-    }
-
-    .modal-product-form .form-label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #0b1b32;
-      margin-bottom: 6px;
-    }
-
-    .modal-qty-controls {
-      display: inline-flex;
-      border: 2px solid #0b1b32;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .modal-qty-btn {
-      width: 40px;
-      height: 40px;
-      border: none;
-      background: #0b1b32;
-      color: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-qty-btn:hover {
-      background: var(--color-yellow);
-      color: #0b1b32;
-    }
-
-    .modal-qty-controls input {
-      width: 50px;
-      height: 40px;
-      border: none;
-      text-align: center;
-      font-weight: 700;
-      color: #0b1b32;
-      background: transparent;
-    }
-
-    .modal-product-form textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 0.9rem;
-      resize: vertical;
-    }
-
-    .modal-product-form textarea:focus {
-      outline: none;
-      border-color: #0b1b32;
-    }
-
-    .modal-btn-add {
-      width: 100%;
-      padding: 14px;
-      background: var(--color-yellow);
-      color: #0b1b32;
-      border: none;
-      border-radius: var(--radius-pill);
-      font-weight: 700;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .modal-btn-add:hover {
-      background: var(--color-yellow-alt);
-    }
-
-    @media (max-width: 600px) {
-      .modal-product-detail {
-        grid-template-columns: 1fr;
-      }
-      .modal-product-image img {
-        min-height: 200px;
-      }
-    }
   </style>
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const modal = document.getElementById('productModal');
-      const modalBody = document.getElementById('modalBody');
-      const modalClose = document.getElementById('modalClose');
-      const modalBackdrop = document.getElementById('modalBackdrop');
-      
-      function openProductModal(dishData) {
-        const localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'];
-        const imageSrc = dishData.image && localDishImages.includes(dishData.image) 
-          ? '/build/images/' + dishData.image 
-          : '/uploads/' + dishData.image;
-        
-        const fallbackImage = '/build/images/1-.webp';
-        const finalImage = dishData.image ? imageSrc : fallbackImage;
-        
-        modalBody.innerHTML = `
-          <div class="modal-product-detail">
-            <div class="modal-product-image">
-              <img src="${finalImage}" alt="${dishData.name}">
-            </div>
-            <div class="modal-product-info">
-              ${dishData.category ? `<span class="modal-product-category">${dishData.category}</span>` : ''}
-              <h2 class="modal-product-title">${dishData.name}</h2>
-              <p class="modal-product-desc">${dishData.description}</p>
-              <div class="modal-product-price">${dishData.price} €</div>
-              
-              <form action="/commande/ajouter" method="POST" class="modal-product-form" id="modalAddForm">
-                <div class="form-group">
-                  <label class="form-label">Quantité</label>
-                  <div class="modal-qty-controls">
-                    <button type="button" class="modal-qty-btn" id="modalQtyMinus"><i class="fas fa-minus"></i></button>
-                    <input type="number" id="modalQuantity" name="quantity" value="1" min="1" max="10" readonly>
-                    <button type="button" class="modal-qty-btn" id="modalQtyPlus"><i class="fas fa-plus"></i></button>
-                  </div>
-                <div class="form-group">
-                  <label for="modalInstructions" class="form-label">Instructions spéciales</label>
-                  <textarea id="modalInstructions" name="special_instructions" rows="2" placeholder="Ex: sans oignons, sauce à part..."></textarea>
-                </div>
-                <input type="hidden" name="dish_id" value="${dishData.id}">
-                <button type="submit" class="modal-btn-add">
-                  <i class="fas fa-shopping-basket"></i>
-                  Ajouter au panier
-                </button>
-              </form>
-            </div>
-        `;
-        
-        const qtyInput = document.getElementById('modalQuantity');
-        const qtyMinus = document.getElementById('modalQtyMinus');
-        const qtyPlus = document.getElementById('modalQtyPlus');
-        
-        qtyMinus.addEventListener('click', function() {
-          let current = parseInt(qtyInput.value);
-          if (current > 1) qtyInput.value = current - 1;
-        });
-        
-        qtyPlus.addEventListener('click', function() {
-          let current = parseInt(qtyInput.value);
-          if (current < 10) qtyInput.value = current + 1;
-        });
-        
-        const form = document.getElementById('modalAddForm');
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          const formData = new FormData(form);
-          
-          fetch('/commande/ajouter', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            closeModal();
-            showFlashMessage('success', dishData.name + ' ajouté au panier !');
-          })
-          .catch(error => {
-            console.error('Erreur:', error);
-          });
-        });
-        
-        modal.classList.add('is-open');
-        document.body.classList.add('no-scroll');
-      }
-      
-      function closeModal() {
-        modal.classList.remove('is-open');
-        document.body.classList.remove('no-scroll');
-      }
-      
-      function showFlashMessage(type, message) {
-        const main = document.getElementById('main-content');
-        const alert = document.createElement('div');
-        alert.className = 'alert alert-' + type;
-        alert.textContent = message;
-        main.insertBefore(alert, main.firstChild);
-        setTimeout(() => alert.remove(), 3000);
-      }
-      
-      modalClose.addEventListener('click', closeModal);
-      modalBackdrop.addEventListener('click', closeModal);
-      
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal.classList.contains('is-open')) {
-          closeModal();
-        }
-      });
-      
-      // Gestion des clics sur les cartes produits
-      const productTriggers = document.querySelectorAll('.product-modal-trigger');
-      productTriggers.forEach(trigger => {
-        trigger.addEventListener('click', function(e) {
-          // Ne pas ouvrir le modal si on clique sur le bouton ajouter
-          if (e.target.closest('.add-to-cart-btn')) {
-            return;
-          }
-          
-          const dishData = {
-            id: this.dataset.dishId,
-            name: this.dataset.dishName,
-            description: this.dataset.dishDescription,
-            price: this.dataset.dishPrice,
-            category: this.dataset.dishCategory,
-            image: this.dataset.dishImage
-          };
-          openProductModal(dishData);
-        });
-      });
-    });
-  </script>
+  {{ encore_entry_script_tags('product-modal') }}
 {% endblock %}

@@ -13,6 +13,7 @@ Encore
   .setPublicPath("/build")
   // only needed for CDN's or sub-directory deploy
   .addEntry("app", "./assets/script/app.js")
+  .addEntry("product-modal", "./assets/script/product-modal.js")
 
   // When enabled, Webpack "splits" your files into smaller pieces for better optimization.
   .splitEntryChunks()
