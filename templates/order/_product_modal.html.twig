@@ -30,7 +30,9 @@
 }
 </script>
 
-<div class="product-modal" id="productModal" aria-hidden="true" data-fallback="{{ asset('build/images/1-.webp') }}">
+<div class="product-modal" id="productModal" aria-hidden="true"
+     data-fallback="{{ asset('build/images/1-.webp') }}"
+     data-csrf="{{ csrf_token('add_to_cart') }}">
   <div class="modal-backdrop" id="modalBackdrop"></div>
   <div class="modal-content">
     <button class="modal-close" id="modalClose" aria-label="Fermer">&times;</button>

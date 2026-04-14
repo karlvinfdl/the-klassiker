@@ -15,10 +15,10 @@
       {# Check if it's a local image (from build/images/) or uploaded image (from uploads/) #}
       {% set localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'] %}
       {% if dish.image in localDishImages %}
-        <img src="{{ asset('build/images/' ~ dish.image) }}" alt="{{ dish.name }}" style="max-width: 200px; border-radius: 8px;">
+        <img src="{{ asset('build/images/' ~ dish.image) }}" alt="{{ dish.name }}" style="max-width: 200px; border-radius: 0;">
         <span class="badge bg-info ms-2">Image locale</span>
       {% else %}
-        <img src="{{ asset('uploads/' ~ dish.image) }}" alt="{{ dish.name }}" style="max-width: 200px; border-radius: 8px;">
+        <img src="{{ asset('uploads/' ~ dish.image) }}" alt="{{ dish.name }}" style="max-width: 200px; border-radius: 0;">
         <span class="badge bg-secondary ms-2">Image uploadée</span>
       {% endif %}
     </div>

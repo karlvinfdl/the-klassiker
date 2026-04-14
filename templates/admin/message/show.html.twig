@@ -33,14 +33,30 @@
     </div>
     <div class="col-md-6">
       <p><strong>Message :</strong></p>
-      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; white-space: pre-wrap;">{{ message.message }}</div>
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 0; white-space: pre-wrap;">{{ message.message }}</div>
     </div>
   </div>
 
-  <div class="mt-4">
-    <a href="mailto:{{ message.email }}?subject=Re: {{ message.subject }}" class="btn btn-primary">
+  <div class="mt-4 d-flex gap-2 flex-wrap">
+    <a href="mailto:{{ message.email }}?subject=Re: {{ message.subject|url_encode }}" class="btn btn-primary">
       <i class="fas fa-reply"></i> Répondre par email
     </a>
+
+    {% if message.isRead %}
+      <form action="{{ path('admin_message_mark_unread', {id: message.id}) }}" method="POST">
+        <input type="hidden" name="_token" value="{{ csrf_token('mark_unread' ~ message.id) }}">
+        <button type="submit" class="btn btn-outline-secondary">
+          <i class="fas fa-envelope"></i> Marquer comme non lu
+        </button>
+      </form>
+    {% else %}
+      <form action="{{ path('admin_message_mark_read', {id: message.id}) }}" method="POST">
+        <input type="hidden" name="_token" value="{{ csrf_token('mark_read' ~ message.id) }}">
+        <button type="submit" class="btn btn-outline-success">
+          <i class="fas fa-envelope-open"></i> Marquer comme lu
+        </button>
+      </form>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

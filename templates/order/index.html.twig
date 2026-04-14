@@ -68,6 +68,7 @@
                         <form action="{{ path('app_order_add') }}" method="POST" class="add-to-cart-form add-to-cart-btn" onclick="event.stopPropagation()">
                           <input type="hidden" name="dish_id" value="{{ dish.id }}">
                           <input type="hidden" name="quantity" value="1">
+                          <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
                           <button type="submit" class="btn btn-add-cart">
                             <i class="fas fa-plus"></i> Ajouter
                           </button>
@@ -138,7 +139,7 @@
       background: var(--color-yellow);
       color: #0b1b32;
       padding: 12px 20px;
-      border-radius: 999px;
+      border-radius: 0;
       font-weight: 700;
       text-decoration: none;
       box-shadow: 0 8px 24px rgba(0,0,0,0.3);
@@ -211,7 +212,7 @@
 
     .order-item {
       background: #fdf7ee;
-      border-radius: 16px;
+      border-radius: 0;
       overflow: hidden;
       box-shadow: 0 4px 16px rgba(0,0,0,0.08);
       display: flex;
@@ -269,7 +270,7 @@
       color: #fff8e8;
       border: none;
       padding: 6px 12px;
-      border-radius: 8px;
+      border-radius: 0;
       font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
@@ -292,7 +293,7 @@
     /* Alerts */
     .alert {
       padding: 16px 20px;
-      border-radius: 12px;
+      border-radius: 0;
       margin-bottom: 20px;
     }
     

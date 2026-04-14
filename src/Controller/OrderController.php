@@ -10,6 +10,7 @@ use App\Entity\OrderItem;
 use App\Form\OrderType;
 use App\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -22,7 +23,8 @@ class OrderController extends AbstractController
 
   public function __construct(
     private RequestStack $requestStack,
-    private EntityManagerInterface $em
+    private EntityManagerInterface $em,
+    private LoggerInterface $logger
   ) {
   }
 
@@ -83,17 +85,22 @@ class OrderController extends AbstractController
   #[Route('/commande/ajouter', name: 'app_order_add', methods: ['POST'])]
   public function addToCart(Request $request): Response
   {
+    if (!$this->isCsrfTokenValid('add_to_cart', $request->request->get('_token'))) {
+      $this->addFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
+      return $this->redirectToRoute('app_order');
+    }
+
     $dishId = $request->request->get('dish_id');
     $quantity = (int) $request->request->get('quantity', 1);
-    $specialInstructions = $request->request->get('special_instructions', '');
+    $specialInstructions = mb_substr($request->request->get('special_instructions', ''), 0, 500);
 
-    if (!$dishId || $quantity < 1) {
+    if (!$dishId || $quantity < 1 || $quantity > 20) {
       $this->addFlash('error', 'Article invalide');
       return $this->redirectToRoute('app_order');
     }
 
     $dish = $this->em->getRepository(Dish::class)->find($dishId);
-    if (!$dish) {
+    if (!$dish || !$dish->isIsActive()) {
       $this->addFlash('error', 'Article non trouvé');
       return $this->redirectToRoute('app_order');
     }
@@ -124,9 +131,7 @@ class OrderController extends AbstractController
 
     $this->addFlash('success', $dish->getName() . ' ajouté au panier !');
 
-    // Renvoyer vers la page précédente ou commander
-    $referer = $request->headers->get('referer', $this->generateUrl('app_order'));
-    return $this->redirect($referer);
+    return $this->redirectToRoute('app_order');
   }
 
   /**
@@ -135,6 +140,11 @@ class OrderController extends AbstractController
   #[Route('/commande/update', name: 'app_order_update', methods: ['POST'])]
   public function updateCart(Request $request): Response
   {
+    if (!$this->isCsrfTokenValid('update_cart', $request->request->get('_token'))) {
+      $this->addFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
+      return $this->redirectToRoute('app_order_cart');
+    }
+
     $index = (int) $request->request->get('index');
     $quantity = (int) $request->request->get('quantity');
 
@@ -145,7 +155,7 @@ class OrderController extends AbstractController
         unset($cart[$index]);
         $cart = array_values($cart); // Réindexer
       } else {
-        $cart[$index]['quantity'] = $quantity;
+        $cart[$index]['quantity'] = min($quantity, 20);
       }
       $this->saveCart($cart);
     }
@@ -156,9 +166,14 @@ class OrderController extends AbstractController
   /**
    * Supprimer un article du panier
    */
-  #[Route('/commande/remove/{index}', name: 'app_order_remove')]
-  public function removeFromCart(int $index): Response
+  #[Route('/commande/remove/{index}', name: 'app_order_remove', methods: ['POST'])]
+  public function removeFromCart(Request $request, int $index): Response
   {
+    if (!$this->isCsrfTokenValid('remove_from_cart_' . $index, $request->request->get('_token'))) {
+      $this->addFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
+      return $this->redirectToRoute('app_order_cart');
+    }
+
     $cart = $this->getCart();
 
     if (isset($cart[$index])) {
@@ -205,30 +220,43 @@ class OrderController extends AbstractController
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      // Ajouter les articles au order
+      // Recalculer le total depuis la BDD pour éviter toute manipulation de prix
+      $verifiedTotal = 0.0;
+
       foreach ($cart as $item) {
         $orderItem = new OrderItem();
-        $orderItem->setDishName($item['dish_name']);
-        $orderItem->setUnitPrice($item['unit_price']);
-        $orderItem->setQuantity($item['quantity']);
-        $orderItem->setSpecialInstructions($item['special_instructions'] ?? null);
+        $orderItem->setQuantity(min((int) ($item['quantity'] ?? 1), 20));
+        $orderItem->setSpecialInstructions(
+          isset($item['special_instructions']) ? mb_substr($item['special_instructions'], 0, 500) : null
+        );
 
-        // Associer le plat si existant
-        if (isset($item['dish_id'])) {
+        // Récupérer le prix réel depuis la BDD
+        if (!empty($item['dish_id'])) {
           $dish = $this->em->getRepository(Dish::class)->find($item['dish_id']);
-          if ($dish) {
+          if ($dish && $dish->isIsActive()) {
             $orderItem->setDish($dish);
+            $orderItem->setDishName($dish->getName());
+            $orderItem->setUnitPrice($dish->getPrice());
+            $verifiedTotal += $orderItem->getQuantity() * (float) $dish->getPrice();
+          } else {
+            // Plat introuvable ou désactivé, ignorer
+            continue;
           }
+        } else {
+          continue;
         }
 
         $order->addItem($orderItem);
       }
 
-      // Calculer le total
-      $order->setTotalAmount((string) $cartTotal);
+      if ($order->getItems()->isEmpty()) {
+        $this->addFlash('error', 'Votre panier ne contient plus d\'articles disponibles.');
+        return $this->redirectToRoute('app_order');
+      }
+
+      $order->setTotalAmount(number_format($verifiedTotal, 2, '.', ''));
       $order->setStatus(Order::STATUS_PENDING);
 
-      // Sauvegarder en base
       $this->em->persist($order);
       $this->em->flush();
 
@@ -241,7 +269,10 @@ class OrderController extends AbstractController
         $emailService->sendOrderConfirmation($order);
         $emailService->sendNewOrderNotification($order);
       } catch (\Exception $e) {
-        // Log error but don't block
+        $this->logger->error('Échec envoi email commande #{id}: {message}', [
+          'id' => $order->getId(),
+          'message' => $e->getMessage(),
+        ]);
       }
 
       return $this->redirectToRoute('app_order_confirmation', ['id' => $order->getId()]);

@@ -10,9 +10,11 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/photo')]
+#[IsGranted('ROLE_ADMIN')]
 class PhotoController extends AbstractController
 {
   #[Route('/', name: 'admin_photo_index')]
@@ -91,8 +93,8 @@ class PhotoController extends AbstractController
         $photo->setFilename($localImage);
 
         // Supprimer l'ancienne image si elle était dans uploads
-        if ($originalFilename && file_exists($this->getParameter('uploads_directory') . '/' . $originalFilename)) {
-          unlink($this->getParameter('uploads_directory') . '/' . $originalFilename);
+        if ($originalFilename) {
+          $this->safeUnlink($this->getParameter('uploads_directory'), $originalFilename);
         }
       } elseif ($imageFile) {
         // Upload d'une nouvelle image
@@ -109,10 +111,7 @@ class PhotoController extends AbstractController
 
           // Supprimer l'ancienne image
           if ($originalFilename) {
-            $oldPath = $this->getParameter('uploads_directory') . '/' . $originalFilename;
-            if (file_exists($oldPath)) {
-              unlink($oldPath);
-            }
+            $this->safeUnlink($this->getParameter('uploads_directory'), $originalFilename);
           }
         } catch (FileException $e) {
           $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
@@ -151,12 +150,8 @@ class PhotoController extends AbstractController
   {
     $csrfToken = $request->request->get('_token');
     if ($this->isCsrfTokenValid('delete' . $photo->getId(), $csrfToken)) {
-      // Supprimer l'image
       if ($photo->getFilename()) {
-        $imagePath = $this->getParameter('uploads_directory') . '/' . $photo->getFilename();
-        if (file_exists($imagePath)) {
-          unlink($imagePath);
-        }
+        $this->safeUnlink($this->getParameter('uploads_directory'), $photo->getFilename());
       }
 
       $em->remove($photo);
@@ -165,6 +160,19 @@ class PhotoController extends AbstractController
     }
 
     return $this->redirectToRoute('admin_photo_index');
+  }
+
+  private function safeUnlink(string $directory, string $filename): void
+  {
+    $realDir = realpath($directory);
+    if ($realDir === false) {
+      return;
+    }
+    $fullPath = $realDir . DIRECTORY_SEPARATOR . basename($filename);
+    $realPath = realpath($fullPath);
+    if ($realPath !== false && str_starts_with($realPath, $realDir . DIRECTORY_SEPARATOR) && is_file($realPath)) {
+      unlink($realPath);
+    }
   }
 }
 

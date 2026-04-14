@@ -11,12 +11,12 @@
   --color-text: #fdfdfd;
   --color-dark: #0b1220;
 
-  --radius-lg: 26px;
-  --radius-md: 18px;
-  --radius-pill: 999px;
+  --radius-lg: 0px;
+  --radius-md: 0px;
+  --radius-pill: 0px;
 
-  --shadow-soft: 0 14px 35px rgba(0, 0, 0, 0.3);
-  --shadow-light: 0 8px 20px rgba(0, 0, 0, 0.2);
+  --shadow-soft: 0 6px 24px rgba(0, 0, 0, 0.45);
+  --shadow-light: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
 
 /* RESET */
@@ -161,7 +161,7 @@ a {
   justify-content: center;
   width: 38px;
   height: 38px;
-  border-radius: 50%;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.1);
   transition: background 0.2s ease;
 }
@@ -202,7 +202,7 @@ a {
   height: 3px;
   margin: 5px 0;
   background: #fff8e8;
-  border-radius: 10px;
+  border-radius: 0;
   transition:
     transform 0.35s ease,
     opacity 0.35s ease;
@@ -253,7 +253,7 @@ a {
   content: "";
   width: 8px;
   height: 8px;
-  border-radius: 999px;
+  border-radius: 0;
   background: #29d344;
   box-shadow: 0 0 0 6px rgba(41, 211, 68, 0.25);
 }
@@ -344,7 +344,7 @@ a {
   bottom: 16px;
   max-width: 260px;
   padding: 10px 14px;
-  border-radius: 14px;
+  border-radius: 0;
   background: rgba(11, 27, 50, 0.6);
   color: var(--color-beige);
   font-size: 0.8rem;
@@ -358,7 +358,7 @@ a {
 
 /* ================= BUTTONS ================= */
 .btn {
-  border-radius: 999px;
+  border-radius: 0;
   border: none;
   cursor: pointer;
   font-weight: 700;
@@ -410,7 +410,7 @@ a {
 }
 
 .btn-outline-sm {
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid rgba(11, 27, 50, 0.25);
   background: transparent;
   color: #0b1b32;
@@ -605,7 +605,7 @@ a {
   letter-spacing: 0.1em;
   font-size: 0.76rem;
   padding: 5px 14px;
-  border-radius: 999px;
+  border-radius: 0;
   background: var(--color-yellow);
   color: #0b1b32;
   cursor: default;
@@ -841,7 +841,7 @@ a {
 
 .concept-item {
   padding: 12px 14px;
-  border-radius: 14px;
+  border-radius: 0;
   background: rgba(255, 248, 232, 0.03);
   border: 1px solid rgba(255, 248, 232, 0.06);
   font-size: 0.9rem;
@@ -907,7 +907,7 @@ a {
   color: #fff;
   width: 44px;
   height: 44px;
-  border-radius: 999px;
+  border-radius: 0;
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -955,11 +955,11 @@ a {
 
 .gallery-thumbs::-webkit-scrollbar-thumb {
   background: rgba(11, 27, 50, 0.2);
-  border-radius: 999px;
+  border-radius: 0;
 }
 
 .gallery-thumb {
-  border-radius: 12px;
+  border-radius: 0;
   padding: 0;
   border: 2px solid transparent;
   background: none;
@@ -1006,7 +1006,7 @@ a {
 }
 
 .info-block {
-  border-radius: 16px;
+  border-radius: 0;
   background: radial-gradient(circle at top left, #9a1515);
   padding: 16px 18px;
   border: 1px solid rgba(148, 163, 184, 0.3);
@@ -1046,7 +1046,7 @@ a {
 
 .order-card {
   background: #fff;
-  border-radius: 18px;
+  border-radius: 0;
   padding: 16px 16px 18px;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
   font-size: 0.9rem;
@@ -1083,7 +1083,7 @@ a {
   max-width: 960px;
   width: 100%;
   max-height: 90vh;
-  border-radius: 18px;
+  border-radius: 0;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   background: #000;
@@ -1106,7 +1106,7 @@ a {
   color: #fff;
   width: 36px;
   height: 36px;
-  border-radius: 999px;
+  border-radius: 0;
   cursor: pointer;
   font-size: 1.4rem;
   display: grid;
@@ -1166,7 +1166,7 @@ a {
   font-size: 0.78rem;
   letter-spacing: 0.1em;
   padding: 4px 12px;
-  border-radius: 999px;
+  border-radius: 0;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   white-space: nowrap;
@@ -1255,7 +1255,7 @@ a {
 }
 
 .contact-card {
-  border-radius: 22px;
+  border-radius: 0;
   padding: 22px 20px 24px;
   box-shadow: var(--shadow-light);
   background: #9a1515;
@@ -1293,7 +1293,7 @@ a {
 
 .contact-form input,
 .contact-form textarea {
-  border-radius: 10px;
+  border-radius: 0;
   border: 1px solid rgba(15, 23, 42, 0.15);
   padding: 9px 10px;
   font-size: 0.9rem;
@@ -1324,7 +1324,7 @@ a {
   margin-top: 12px;
   width: 100%;
   min-height: 300px;
-  border-radius: 16px;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -1370,7 +1370,7 @@ a {
 
 .recrutement-form-wrapper {
   background: #0b1b32;
-  border-radius: 18px;
+  border-radius: 0;
   padding: 18px 18px 20px;
   border: 1px solid rgba(255, 248, 232, 0.35);
   font-size: 0.9rem;
@@ -1664,7 +1664,7 @@ a {
 /* ================= ALERTS ================= */
 .alert {
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: 0;
   margin-bottom: 16px;
 }
 
@@ -1698,7 +1698,7 @@ a {
   background: #fff;
   color: #0b1b32;
   border: 1px solid rgba(15, 23, 42, 0.2);
-  border-radius: 10px;
+  border-radius: 0;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
@@ -1782,7 +1782,7 @@ a {
 
 .register-card {
   background: #fff;
-  border-radius: 22px;
+  border-radius: 0;
   padding: 28px 24px 32px;
   box-shadow: var(--shadow-light);
 }
@@ -1811,7 +1811,7 @@ a {
 .register-form input {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 10px;
+  border-radius: 0;
   border: 1px solid rgba(15, 23, 42, 0.2);
   font-size: 0.95rem;
   font-family: inherit;
@@ -1981,7 +1981,7 @@ a {
 .modal-qty-controls {
   display: inline-flex;
   border: 2px solid #0b1b32;
-  border-radius: 10px;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -2016,7 +2016,7 @@ a {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 0;
   font-family: inherit;
   font-size: 0.9rem;
   resize: vertical;
@@ -2084,7 +2084,7 @@ a {
   gap: 10px;
   background: #f8f8f8;
   border: 2px solid transparent;
-  border-radius: 10px;
+  border-radius: 0;
   padding: 10px 12px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
@@ -2128,7 +2128,7 @@ a {
   align-items: center;
   gap: 10px;
   background: #f8f8f8;
-  border-radius: 12px;
+  border-radius: 0;
   padding: 10px;
   overflow: hidden;
 }
@@ -2137,7 +2137,7 @@ a {
   width: 56px;
   height: 56px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 0;
   flex-shrink: 0;
 }
 
@@ -2200,4 +2200,190 @@ a {
   .modal-extras-grid {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* ===============================================================
+   STYLE CARRÉ — GLOBAL OVERRIDES
+   Supprime tous les arrondis résiduels et uniformise les inputs
+   =============================================================== */
+
+/* Bouton + dans les extras modal : carré au lieu de cercle */
+.modal-extra-add {
+  border-radius: 0;
+}
+
+/* Inputs et selects globaux */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="url"],
+select,
+textarea,
+.form-control {
+  border-radius: 0 !important;
+  border: 1.5px solid #d0d0d0;
+  padding: 10px 14px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  width: 100%;
+  transition: border-color 0.2s ease;
+  background: #fff;
+  color: #0b1b32;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="url"]:focus,
+select:focus,
+textarea:focus,
+.form-control:focus {
+  outline: none;
+  border-color: #0b1b32;
+  box-shadow: 3px 3px 0 rgba(11, 27, 50, 0.15);
+}
+
+/* Section-beige : inputs sur fond clair */
+.section-beige input,
+.section-beige select,
+.section-beige textarea,
+.section-beige .form-control {
+  border-color: #bbb;
+}
+
+.section-beige input:focus,
+.section-beige select:focus,
+.section-beige textarea:focus,
+.section-beige .form-control:focus {
+  border-color: #0b1b32;
+}
+
+/* Labels globaux */
+label {
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Boutons — forcer 0 radius partout */
+.btn,
+button[type="submit"],
+input[type="submit"],
+.modal-btn-add,
+.btn-primary,
+.btn-ghost,
+.btn-outline,
+.btn-outline-sm {
+  border-radius: 0 !important;
+}
+
+/* Alerte flash */
+.alert {
+  border-radius: 0;
+  border-left: 4px solid currentColor;
+  padding: 14px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.alert-success {
+  background: #e9f9ee;
+  color: #1a7a38;
+  border-color: #1a7a38;
+}
+
+.alert-error,
+.alert-danger {
+  background: #fef2f2;
+  color: #9a1515;
+  border-color: #9a1515;
+}
+
+/* Hero badge — garder le bord carré */
+.hero-badge {
+  border-radius: 0;
+}
+
+/* Page hero section */
+.page-hero {
+  padding: 48px 20px;
+  background: linear-gradient(135deg, #0b1b32 0%, #9a1515 100%);
+  border-bottom: 4px solid var(--color-yellow);
+}
+
+/* Liens d'action carré + accent jaune */
+.btn-primary {
+  background: var(--color-yellow);
+  color: #0b1b32;
+  border: 2px solid var(--color-yellow);
+  letter-spacing: 0.1em;
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: var(--color-yellow);
+  border-color: var(--color-yellow);
+}
+
+.btn-ghost {
+  border: 2px solid rgba(255, 248, 232, 0.4);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 248, 232, 0.08);
+  border-color: rgba(255, 248, 232, 0.7);
+}
+
+/* Header — ligne d'accent en bas */
+.site-header {
+  border-bottom: 2px solid var(--color-yellow);
+}
+
+/* Cards — bordure gauche jaune style "carré" */
+.food-card {
+  border-left: 3px solid var(--color-yellow);
+}
+
+.order-card {
+  border-left: 3px solid var(--color-yellow);
+}
+
+/* Section-header kicker — ligne au lieu de pill */
+.section-kicker {
+  display: inline-block;
+  border-bottom: 2px solid var(--color-yellow);
+  padding-bottom: 4px;
+}
+
+/* Table admin — plus carrée */
+.table-card {
+  border-radius: 0;
+}
+
+/* Scrollbar globale */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(11, 27, 50, 0.3);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-yellow);
 }

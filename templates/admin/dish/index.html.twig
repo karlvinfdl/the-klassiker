@@ -34,12 +34,12 @@
             {# Check if it's a local image (from build/images/) or uploaded image (from uploads/) #}
             {% set localDishImages = ['1-.webp', '2-.webp', '3-.webp', '4-.webp', '5-.webp', '6-.webp', '7-.webp', '8-.webp', '9-.webp', '10-.webp', '11-.webp', '12-.webp'] %}
             {% if dish.image in localDishImages %}
-              <img src="{{ asset('build/images/' ~ dish.image) }}" alt="{{ dish.name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+              <img src="{{ asset('build/images/' ~ dish.image) }}" alt="{{ dish.name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 0;">
             {% else %}
-              <img src="{{ asset('uploads/' ~ dish.image) }}" alt="{{ dish.name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+              <img src="{{ asset('uploads/' ~ dish.image) }}" alt="{{ dish.name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 0;">
             {% endif %}
           {% else %}
-            <div style="width: 60px; height: 60px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <div style="width: 60px; height: 60px; background: #eee; border-radius: 0; display: flex; align-items: center; justify-content: center;">
               <i class="fas fa-utensils" style="color: #999;"></i>
             </div>
           {% endif %}

@@ -9,8 +9,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/hours')]
+#[IsGranted('ROLE_ADMIN')]
 class HoursController extends AbstractController
 {
   #[Route('/', name: 'admin_hours_index')]

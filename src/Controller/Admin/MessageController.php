@@ -8,8 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/message')]
+#[IsGranted('ROLE_ADMIN')]
 class MessageController extends AbstractController
 {
   #[Route('/', name: 'admin_message_index')]
@@ -33,9 +35,14 @@ class MessageController extends AbstractController
     ]);
   }
 
-  #[Route('/{id}/mark-read', name: 'admin_message_mark_read')]
-  public function markRead(ContactMessage $message, EntityManagerInterface $em): Response
+  #[Route('/{id}/mark-read', name: 'admin_message_mark_read', methods: ['POST'])]
+  public function markRead(Request $request, ContactMessage $message, EntityManagerInterface $em): Response
   {
+    if (!$this->isCsrfTokenValid('mark_read' . $message->getId(), $request->request->get('_token'))) {
+      $this->addFlash('error', 'Token de sécurité invalide.');
+      return $this->redirectToRoute('admin_message_show', ['id' => $message->getId()]);
+    }
+
     $message->setIsRead(true);
     $em->flush();
 
@@ -44,9 +51,14 @@ class MessageController extends AbstractController
     return $this->redirectToRoute('admin_message_show', ['id' => $message->getId()]);
   }
 
-  #[Route('/{id}/mark-unread', name: 'admin_message_mark_unread')]
-  public function markUnread(ContactMessage $message, EntityManagerInterface $em): Response
+  #[Route('/{id}/mark-unread', name: 'admin_message_mark_unread', methods: ['POST'])]
+  public function markUnread(Request $request, ContactMessage $message, EntityManagerInterface $em): Response
   {
+    if (!$this->isCsrfTokenValid('mark_unread' . $message->getId(), $request->request->get('_token'))) {
+      $this->addFlash('error', 'Token de sécurité invalide.');
+      return $this->redirectToRoute('admin_message_show', ['id' => $message->getId()]);
+    }
+
     $message->setIsRead(false);
     $em->flush();
 

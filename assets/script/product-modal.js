@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const modalBody = document.getElementById("modalBody");
   const modalClose = document.getElementById("modalClose");
   const modalBackdrop = document.getElementById("modalBackdrop");
+  const csrfToken = modal.dataset.csrf || "";
 
   // Charger les données JSON embarquées dans la page
   const dataEl = document.getElementById("modal-data");
@@ -130,37 +131,46 @@ document.addEventListener("DOMContentLoaded", function () {
     // Soumission formulaire principal + suppléments
     document.getElementById("modalAddForm").addEventListener("submit", function (e) {
       e.preventDefault();
+      const btn = this.querySelector("[type=submit]");
+      btn.disabled = true;
+      btn.textContent = "Ajout en cours…";
+
       const checkedSupplements = [...modalBody.querySelectorAll("input[name='supplements[]']:checked")];
 
-      // Ajouter le plat principal
-      fetch("/commande/ajouter", { method: "POST", body: new FormData(this) })
+      const mainFd = new FormData(this);
+      mainFd.set("_token", csrfToken);
+
+      fetch("/commande/ajouter", { method: "POST", body: mainFd })
         .then(() => {
-          // Ajouter chaque supplément comme item séparé
           const supplementPromises = checkedSupplements.map(cb => {
             const fd = new FormData();
             fd.append("dish_id", cb.value);
             fd.append("quantity", "1");
             fd.append("special_instructions", "Supplément: " + cb.dataset.name);
+            fd.append("_token", csrfToken);
             return fetch("/commande/ajouter", { method: "POST", body: fd });
           });
           return Promise.all(supplementPromises);
         })
         .then(() => {
-          closeModal();
-          showFlash(dishData.name + " ajouté au panier !");
+          window.location.reload();
+        })
+        .catch(() => {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-shopping-basket"></i> Ajouter au panier';
         });
     });
 
     // Boutons quick-add boissons/desserts
     modalBody.querySelectorAll(".modal-extra-add").forEach(btn => {
       btn.addEventListener("click", function () {
+        this.disabled = true;
         const fd = new FormData();
         fd.append("dish_id", this.dataset.dishId);
         fd.append("quantity", "1");
+        fd.append("_token", csrfToken);
         fetch("/commande/ajouter", { method: "POST", body: fd }).then(() => {
-          this.innerHTML = '<i class="fas fa-check"></i>';
-          this.style.background = "#29d344";
-          showFlash(this.dataset.dishName + " ajouté !");
+          window.location.reload();
         });
       });
     });

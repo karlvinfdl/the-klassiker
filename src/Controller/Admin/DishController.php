@@ -10,9 +10,11 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/dish')]
+#[IsGranted('ROLE_ADMIN')]
 class DishController extends AbstractController
 {
   #[Route('/', name: 'admin_dish_index')]
@@ -110,8 +112,8 @@ class DishController extends AbstractController
           $dish->setImage($newFilename);
 
           // Supprimer l'ancienne image si elle était dans uploads
-          if ($originalImage && file_exists($this->getParameter('uploads_directory') . '/' . $originalImage)) {
-            unlink($this->getParameter('uploads_directory') . '/' . $originalImage);
+          if ($originalImage) {
+            $this->safeUnlink($this->getParameter('uploads_directory'), $originalImage);
           }
         } catch (FileException $e) {
           $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
@@ -169,12 +171,8 @@ class DishController extends AbstractController
   {
     $csrfToken = $request->request->get('_token');
     if ($this->isCsrfTokenValid('delete' . $dish->getId(), $csrfToken)) {
-      // Supprimer l'image associée
       if ($dish->getImage()) {
-        $imagePath = $this->getParameter('uploads_directory') . '/' . $dish->getImage();
-        if (file_exists($imagePath)) {
-          unlink($imagePath);
-        }
+        $this->safeUnlink($this->getParameter('uploads_directory'), $dish->getImage());
       }
 
       $em->remove($dish);
@@ -183,6 +181,19 @@ class DishController extends AbstractController
     }
 
     return $this->redirectToRoute('admin_dish_index');
+  }
+
+  private function safeUnlink(string $directory, string $filename): void
+  {
+    $realDir = realpath($directory);
+    if ($realDir === false) {
+      return;
+    }
+    $fullPath = $realDir . DIRECTORY_SEPARATOR . basename($filename);
+    $realPath = realpath($fullPath);
+    if ($realPath !== false && str_starts_with($realPath, $realDir . DIRECTORY_SEPARATOR) && is_file($realPath)) {
+      unlink($realPath);
+    }
   }
 }
 

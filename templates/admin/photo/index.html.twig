@@ -31,9 +31,9 @@
           {# Check if it's a local image (from build/images/) or uploaded image (from uploads/) #}
           {% set localGalleryImages = ['galerie-11.webp', 'galerie-12.webp', 'galerie-13.webp', 'galerie-14.webp', 'galerie-15.webp', 'galerie-16.webp', 'galerie-17.webp', 'galerie-18.webp', 'galerie-19.webp', 'galerie-20.webp', 'galerie-21.webp', 'galerie-22.webp', 'galerie-23.webp', 'galerie-24.webp', 'galerie-25.webp', 'galerie-26.webp', 'galerie-27.webp', 'galerie-28.webp', 'galerie-29.webp', 'hero1.webp', 'livraison.webp'] %}
           {% if photo.filename in localGalleryImages %}
-            <img src="{{ asset('build/images/' ~ photo.filename) }}" alt="{{ photo.altText|default('') }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 8px;">
+            <img src="{{ asset('build/images/' ~ photo.filename) }}" alt="{{ photo.altText|default('') }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 0;">
           {% else %}
-            <img src="{{ asset('uploads/' ~ photo.filename) }}" alt="{{ photo.altText|default('') }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 8px;">
+            <img src="{{ asset('uploads/' ~ photo.filename) }}" alt="{{ photo.altText|default('') }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 0;">
           {% endif %}
         </td>
         <td>{{ photo.altText|default('-') }}</td>
